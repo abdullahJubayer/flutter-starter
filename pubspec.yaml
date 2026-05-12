@@ -1,0 +1,102 @@
+name: flutter_template
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.0-290.4.beta
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # Routing
+  auto_route: ^11.0.0
+
+  # Dependency injection
+  get_it: ^9.2.0
+  injectable: ^2.7.1+4
+
+  # Networking
+  dio: ^5.9.0
+  retrofit: ^4.9.2
+
+  # State management
+  riverpod_annotation: ^4.0.0
+  flutter_riverpod: ^3.1.0
+
+  # Storage and secure env
+  shared_preferences: ^2.5.4
+  flutter_secure_storage: ^10.2.0
+  flutter_secure_dotenv: ^2.0.0
+
+  # Serialization
+  json_annotation: ^4.9.0
+
+  # UI assets and presentation helpers
+  cupertino_icons: ^1.0.8
+  flutter_svg: ^2.2.3
+  lottie: ^3.3.2
+  font_awesome_flutter: ^11.0.0
+  google_fonts: ^8.1.0
+  skeletonizer: ^2.1.2
+  cached_network_image: ^3.4.1
+  flutter_widget_from_html: ^0.17.1
+  fluttertoast: ^9.0.0
+  flutter_expandable_fab: ^2.5.2
+
+  # Utilities
+  collection: ^1.19.1
+  intl: ^0.20.2
+  url_launcher: ^6.3.2
+  path_provider: ^2.1.3
+  logging: any
+  vector_graphics: any
+  logger: ^2.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+  # Code generation
+  build_runner: ^2.4.14
+  auto_route_generator: ^10.4.0
+  flutter_gen_runner: ^5.12.0
+  riverpod_generator: ^4.0.0+1
+  riverpod_lint: ^3.1.0
+  injectable_generator: ^2.9.1
+  retrofit_generator: ^10.2.1
+  json_serializable: ^6.6.0
+  flutter_secure_dotenv_generator: ^2.0.0
+
+  # App icon
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  remove_alpha_ios: true
+  image_path: "assets/logo/launcher_icon.png"
+  adaptive_icon_background: "#000000"
+  adaptive_icon_foreground: "assets/logo/launcher_icon.png"
+  min_sdk_android: 21
+
+flutter_gen:
+  output: lib/gen/
+  line_length: 80
+  integrations:
+    flutter_svg: true
+    lottie: true
+
+flutter:
+  generate: true
+  uses-material-design: true
+
+  assets:
+    - assets/logo/
+    - assets/icons/
+    - assets/animations/
