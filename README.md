@@ -17,6 +17,61 @@ samples, guidance on mobile development, and a full API reference.
 
 ---
 
+## 🔧 Flutter & Dart Versions
+
+This project requires specific Flutter and Dart versions for compatibility.
+
+### Version Requirements
+
+- **Flutter**: 3.19.0 or higher
+- **Dart**: 3.3.0 or higher
+
+### Check Current Versions
+
+```bash
+flutter --version
+dart --version
+```
+
+### Using FVM (Flutter Version Manager)
+
+FVM allows you to manage multiple Flutter SDK versions easily.
+
+#### Install FVM
+
+```bash
+# Using Homebrew (macOS/Linux)
+brew tap leoafonso/fvm
+brew install fvm
+
+# Using Chocolatey (Windows)
+choco install fvm
+```
+
+#### Setup FVM in this Project
+
+```bash
+# Set Flutter version for this project
+fvm install 3.19.0
+fvm use 3.19.0
+
+# Or use the `.fvmrc` file if it exists
+fvm use
+```
+
+#### Run Flutter Commands with FVM
+
+```bash
+# Instead of: flutter pub get
+fvm flutter pub get
+
+# Instead of: flutter run
+fvm flutter run
+
+# Instead of: flutter build apk
+fvm flutter build apk
+```
+
 ## 📋 Features
 
 - **Clean Architecture Auth Flow**: UI, domain, and data layers are separated for login and future auth features
