@@ -6,12 +6,9 @@ class SecureEnv {
   }
 
   Map<String, String> get env => {
-        'BASE_URL': const String.fromEnvironment(
-          'BASE_URL',
-          defaultValue: '',
-        ),
-      };
+    'BASE_URL': const String.fromEnvironment('BASE_URL', defaultValue: ''),
+    'NEW_URL': const String.fromEnvironment('BASE_URL', defaultValue: ''),
+  };
 }
 
 final secureEnv = SecureEnv();
-

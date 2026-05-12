@@ -43,3 +43,14 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local env and secret files (do not commit these)
+encryption_key.json
+lib/core/config/env.dart
+lib/core/config/env.dart.lock
+environments/.env
+environments/.env.*
+*.env
+.env.local
+secrets.json
+
