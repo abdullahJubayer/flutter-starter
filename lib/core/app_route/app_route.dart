@@ -13,7 +13,8 @@ class AppRouter extends ar.RootStackRouter {
 
   @override
   List<ar.AutoRoute> get routes => [
-        ar.AutoRoute(path: splash, page: SplashRoute.page),
+        ar.RedirectRoute(path: '/', redirectTo: splash),
+        ar.AutoRoute(path: splash, page: SplashRoute.page, initial: true),
         ar.AutoRoute(path: login, page: LoginRoute.page),
         ar.AutoRoute(path: registration, page: RegistrationRoute.page),
         ar.AutoRoute(path: resetPassword, page: ResetPasswordRoute.page),

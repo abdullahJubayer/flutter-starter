@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/app_route/app_route.dart';
 import 'package:flutter_template/gen/assets.gen.dart';
 
 @RoutePage()
@@ -11,8 +12,7 @@ class SplashScreen extends ConsumerStatefulWidget {
   ConsumerState<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends ConsumerState<SplashScreen>
-    with SingleTickerProviderStateMixin {
+class _SplashScreenState extends ConsumerState<SplashScreen> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   late final Animation<double> _animation;
 
@@ -38,7 +38,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     super.dispose();
   }
 
-  void _navigateNext() {}
+  void _navigateNext() {
+    context.router.pushPath(AppRouter.login);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +75,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     ],
                   ),
                 ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: CircularProgressIndicator(color: Colors.white),
               ),
             ),
           ],
