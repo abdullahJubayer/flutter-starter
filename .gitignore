@@ -53,4 +53,5 @@ environments/.env.*
 *.env
 .env.local
 secrets.json
+lib/core/config/secure_env.dart
 

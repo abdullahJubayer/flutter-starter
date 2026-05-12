@@ -5,7 +5,6 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton()
 class DioClient {
-  final ILocalStorageService _sharePerf;
   final ISessionService _sessionService;
   final Dio _dio;
 
@@ -13,8 +12,7 @@ class DioClient {
     required ILocalStorageService sharePerf,
     required ISessionService sessionService,
   })
-      : _sharePerf = sharePerf,
-        _sessionService = sessionService,
+      :_sessionService = sessionService,
         _dio = Dio(
           BaseOptions(
             baseUrl: '',

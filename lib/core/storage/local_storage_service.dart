@@ -1,7 +1,8 @@
+import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'i_local_storage_service.dart';
-import '../constants/core_constants.dart';
 
+@LazySingleton(as: ILocalStorageService)
 class SharedPreferencesService implements ILocalStorageService {
   final SharedPreferences sharedPreferences;
 

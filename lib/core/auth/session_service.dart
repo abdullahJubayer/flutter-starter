@@ -1,10 +1,12 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:injectable/injectable.dart';
 import 'i_session_service.dart';
 import '../constants/core_constants.dart';
 import '../storage/i_local_storage_service.dart';
 
 /// Implementation of [ISessionService] for managing authentication tokens.
 /// Clears both access tokens (from shared preferences) and refresh tokens (from secure storage).
+@LazySingleton(as: ISessionService)
 class SessionService implements ISessionService {
   final ILocalStorageService _localStorageService;
   final FlutterSecureStorage _secureStorage;

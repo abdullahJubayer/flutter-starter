@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_template/core/di/injection_container.dart';
 import 'package:flutter_template/core/storage/i_local_storage_service.dart';
-import 'package:flutter_template/core/di/service_locator.dart';
 
 const _themeKey = 'theme_mode';
 

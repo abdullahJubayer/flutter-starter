@@ -1,0 +1,15 @@
+// Example secure env facade (template). Copy to lib/core/config/secure_env.dart locally and update as needed.
+
+class SecureEnv {
+  Future<void> load({required String fileName}) async {
+    // Implement runtime .env loading here if you need it.
+  }
+
+  Map<String, String> get env => {
+    'BASE_URL': const String.fromEnvironment('BASE_URL', defaultValue: ''),
+    'NEW_VALUE': const String.fromEnvironment('NEW_VALUE', defaultValue: ''),
+  };
+}
+
+final secureEnv = SecureEnv();
+

@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:dio/dio.dart';
 import 'package:flutter_template/core/di/injection_container.dart';
 import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
@@ -13,7 +12,7 @@ part 'auth_notifier.g.dart';
 
 @riverpod
 class AuthNotifier extends _$AuthNotifier {
-  late final LoginUseCase _loginUseCase = getIt<LoginUseCase>();
+  late final LoginUseCase _loginUseCase = sl<LoginUseCase>();
 
   @override
   AuthState build() {

@@ -2,7 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'injection_container.config.dart';
 
-final getIt = GetIt.instance;
+final sl = GetIt.instance;
 
 @InjectableInit(
   initializerName: 'init',
@@ -10,7 +10,7 @@ final getIt = GetIt.instance;
   asExtension: true,
 )
 Future<void> injectableConfig() async {
-  getIt.init();
+  sl.init();
   // await setupNetworkModule();
   // await setupStorage();
 }
