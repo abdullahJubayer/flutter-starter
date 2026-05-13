@@ -1,52 +1,23 @@
 import 'package:flutter/foundation.dart';
-import 'package:logging/logging.dart';
+import 'package:logger/logger.dart';
 
 import 'i_logger.dart';
 
 class DefaultLogger implements ILogger {
-  final _logger = Logger('');
+  final Logger _logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 2, // number of method calls to be displayed
+      errorMethodCount: 8, // number of method calls if stacktrace is provided
+      lineLength: 120, // width of the output
+      colors: true, // Colorful log messages
+      printEmojis: true, // Print an emoji for each log message
+      printTime: true, // Should each log print contain a timestamp
+      stackTraceBeginIndex: 1, // Skip the first frame (DefaultLogger)
+    ),
+  );
 
   @override
-  Future<void> init() async {
-    hierarchicalLoggingEnabled = true;
-
-    if (kDebugMode) {
-      _logger.level = Level.ALL;
-
-      Logger.root.onRecord.listen((record) {
-        final sb = StringBuffer(
-          '[${_getLevelLabel(record.level.name)}]',
-        );
-        if (record.error != null && record.stackTrace != null) {
-          if (record.loggerName.isNotEmpty) {
-            sb.write(' [${record.loggerName}]');
-          }
-          sb
-            ..write(' [${record.error}]')
-            ..write(' Message: ${record.message}')
-            ..write(' Exception: ${record.stackTrace}');
-        } else if (record.error != null) {
-          if (record.loggerName.isNotEmpty) {
-            sb.write(' [${record.loggerName}]');
-          }
-          sb
-            ..write(' [${record.error}]')
-            ..write(' Message: ${record.message}');
-        } else {
-          if (record.loggerName.isNotEmpty) {
-            sb.write(' [${record.loggerName}]');
-          }
-          sb.write(' Message: ${record.message}');
-        }
-
-        _debugPrintLong(sb.toString());
-      });
-    }
-
-    if (kReleaseMode) {
-      _logger.level = Level.OFF;
-    }
-  }
+  Future<void> init() async {}
 
   @override
   void d({
@@ -55,13 +26,11 @@ class DefaultLogger implements ILogger {
     Object? error,
     StackTrace? stackTrace,
   }) {
-    if (tag == null) {
-      _logger.fine(message, error, stackTrace);
-    } else {
-      final l = Logger(tag);
-      _logger.parent?.children.addAll({tag: l});
-      l.fine(message, error, stackTrace);
-    }
+    _logger.d(
+      _formatMessage(message, tag),
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
   @override
@@ -71,66 +40,45 @@ class DefaultLogger implements ILogger {
     String? tag,
     StackTrace? stackTrace,
   }) {
-    if (tag == null) {
-      _logger.severe(message, error, stackTrace);
-    } else {
-      final l = Logger(tag);
-      _logger.parent?.children.addAll({tag: l});
-      l.severe(message, error, stackTrace);
-    }
+    _logger.e(
+      _formatMessage(message, tag),
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
   @override
   void i({
-    String? message,
+    required String? message,
     String? tag,
     Object? error,
     StackTrace? stackTrace,
   }) {
-    if (tag == null) {
-      _logger.info(message, error, stackTrace);
-    } else {
-      final l = Logger(tag);
-      _logger.parent?.children.addAll({tag: l});
-      l.info(message, error, stackTrace);
-    }
+    _logger.i(
+      _formatMessage(message, tag),
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
   @override
   void w({
-    String? message,
+    required String? message,
     String? tag,
     Object? error,
     StackTrace? stackTrace,
   }) {
-    if (tag == null) {
-      _logger.warning(message, error, stackTrace);
-    } else {
-      final l = Logger(tag);
-      _logger.parent?.children.addAll({tag: l});
-      l.warning(message, error, stackTrace);
-    }
+    _logger.w(
+      _formatMessage(message, tag),
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 
-  String _getLevelLabel(String levelName) {
-    switch (levelName) {
-      case 'FINE':
-        return 'Debug';
-      case 'INFO':
-        return 'Info';
-      case 'WARNING':
-        return 'Warning';
-      case 'SEVERE':
-        return 'Error';
-      default:
-        return 'Verbose';
+  String _formatMessage(String? message, String? tag) {
+    if (tag != null && tag.isNotEmpty) {
+      return '[$tag] ${message ?? ''}';
     }
-  }
-
-  void _debugPrintLong(String message, {int chunkSize = 1000}) {
-    final pattern = RegExp('.{1,$chunkSize}'); // Split by chunks of chunkSize
-    for (final chunk in pattern.allMatches(message)) {
-      debugPrint(chunk.group(0)); // Print each chunk
-    }
+    return message ?? '';
   }
 }

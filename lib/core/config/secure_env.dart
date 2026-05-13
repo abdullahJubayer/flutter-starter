@@ -6,7 +6,7 @@ class SecureEnv {
   }
 
   Map<String, String> get env => {
-    'BASE_URL': const String.fromEnvironment('BASE_URL', defaultValue: ''),
+    'BASE_URL': 'http://localhost:8080/',
     'NEW_URL': const String.fromEnvironment('BASE_URL', defaultValue: ''),
   };
 }

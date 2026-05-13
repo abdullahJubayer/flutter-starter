@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_template/feature/auth/data/dto/login_request_dto.dart';
 import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
 import 'package:flutter_template/feature/auth/domain/model/base_response.dart';
 import 'package:injectable/injectable.dart';
@@ -13,14 +14,10 @@ abstract class ApiClient {
   @factoryMethod
   factory ApiClient(Dio dio) = _ApiClient;
 
-  @POST("login")
-  Future<BaseResponse<AuthResponse>> login(@Body() Map<String, dynamic> map);
+  @POST("auth/register")
+  Future<void> register(@Body() AuthResponse request);
 
-  @POST("register")
-  Future<BaseResponse<AuthResponse>> register(@Body() Map<String, dynamic> map);
+  @POST("auth/register")
+  Future<BaseResponse<AuthResponse>> login(@Body() LoginRequestDto request);
 
-  @POST("email/verify")
-  Future<BaseResponse<AuthResponse>> verifyOtp(
-    @Body() Map<String, dynamic> map,
-  );
 }

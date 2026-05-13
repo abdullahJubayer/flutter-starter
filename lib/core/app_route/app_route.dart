@@ -1,9 +1,8 @@
-import 'package:auto_route/auto_route.dart' as ar;
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter_template/core/app_route/app_route.gr.dart';
 
-import 'app_route.gr.dart';
-
-@ar.AutoRouterConfig(replaceInRouteName: 'Screen,Route')
-class AppRouter extends ar.RootStackRouter {
+@AutoRouterConfig(replaceInRouteName: 'Screen,Route')
+class AppRouter extends RootStackRouter {
   static const String splash = '/splash';
   static const String main = '/main';
   static const String login = '/login';
@@ -12,12 +11,11 @@ class AppRouter extends ar.RootStackRouter {
   static const String home = '/home';
 
   @override
-  List<ar.AutoRoute> get routes => [
-        ar.RedirectRoute(path: '/', redirectTo: splash),
-        ar.AutoRoute(path: splash, page: SplashRoute.page, initial: true),
-        ar.AutoRoute(path: login, page: LoginRoute.page),
-        ar.AutoRoute(path: registration, page: RegistrationRoute.page),
-        ar.AutoRoute(path: resetPassword, page: ResetPasswordRoute.page),
-      ];
+  List<AutoRoute> get routes => [
+    RedirectRoute(path: '/', redirectTo: splash),
+    AutoRoute(path: splash, page: SplashRoute.page, initial: true),
+    AutoRoute(path: login, page: LoginRoute.page),
+    AutoRoute(path: registration, page: RegistrationRoute.page),
+    AutoRoute(path: resetPassword, page: ResetPasswordRoute.page),
+  ];
 }
-

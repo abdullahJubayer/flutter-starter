@@ -18,6 +18,26 @@ class SessionService implements ISessionService {
         _secureStorage = secureStorage;
 
   @override
+  Future<void> saveSession({String? accessToken, String? refreshToken}) async {
+    if (accessToken != null) {
+      await _localStorageService.setData(CoreConstants.accessTokenKey, accessToken);
+    }
+    if (refreshToken != null) {
+      await _secureStorage.write(key: CoreConstants.refreshTokenKey, value: refreshToken);
+    }
+  }
+
+  @override
+  Future<String?> getAccessToken() async {
+    return _localStorageService.getData(CoreConstants.accessTokenKey);
+  }
+
+  @override
+  Future<String?> getRefreshToken() async {
+    return _secureStorage.read(key: CoreConstants.refreshTokenKey);
+  }
+
+  @override
   Future<void> removeSession() async {
     try {
       // Remove access token from shared preferences

@@ -19,6 +19,7 @@ import '../auth/i_session_service.dart' as _i842;
 import '../auth/session_service.dart' as _i205;
 import '../network/api_client.dart' as _i557;
 import '../network/dio_client.dart' as _i667;
+import '../network/socket_service.dart' as _i917;
 import '../storage/i_local_storage_service.dart' as _i385;
 import '../storage/local_storage_service.dart' as _i744;
 import '../storage/secure_storage_service.dart' as _i666;
@@ -59,6 +60,10 @@ extension GetItInjectableX on _i174.GetIt {
         sharePerf: gh<_i385.ILocalStorageService>(),
         sessionService: gh<_i842.ISessionService>(),
       ),
+    );
+    gh.lazySingleton<_i917.SocketService>(
+      () => _i917.SocketService(gh<_i842.ISessionService>()),
+      dispose: (i) => i.dispose(),
     );
     return this;
   }

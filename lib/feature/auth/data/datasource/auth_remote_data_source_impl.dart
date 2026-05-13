@@ -12,7 +12,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<BaseResponse<AuthResponse>> login(LoginRequestDto request) {
-    return _apiClient.login(request.toJson());
+    return _apiClient.login(request);
   }
 }
 

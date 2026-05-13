@@ -20,79 +20,37 @@ class _ApiClient implements ApiClient {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<BaseResponse<AuthResponse>> login(Map<String, dynamic> map) async {
+  Future<void> register(AuthResponse request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(map);
-    final _options = _setStreamType<BaseResponse<AuthResponse>>(
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<void>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'login',
+            'auth/register',
             queryParameters: queryParameters,
             data: _data,
           )
           .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
     );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<AuthResponse> _value;
-    try {
-      _value = BaseResponse<AuthResponse>.fromJson(
-        _result.data!,
-        (json) => AuthResponse.fromJson(json as Map<String, dynamic>),
-      );
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options, response: _result);
-      rethrow;
-    }
-    return _value;
+    await _dio.fetch<void>(_options);
   }
 
   @override
-  Future<BaseResponse<AuthResponse>> register(Map<String, dynamic> map) async {
+  Future<BaseResponse<AuthResponse>> login(LoginRequestDto request) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
-    _data.addAll(map);
+    _data.addAll(request.toJson());
     final _options = _setStreamType<BaseResponse<AuthResponse>>(
       Options(method: 'POST', headers: _headers, extra: _extra)
           .compose(
             _dio.options,
-            'register',
-            queryParameters: queryParameters,
-            data: _data,
-          )
-          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
-    );
-    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late BaseResponse<AuthResponse> _value;
-    try {
-      _value = BaseResponse<AuthResponse>.fromJson(
-        _result.data!,
-        (json) => AuthResponse.fromJson(json as Map<String, dynamic>),
-      );
-    } on Object catch (e, s) {
-      errorLogger?.logError(e, s, _options, response: _result);
-      rethrow;
-    }
-    return _value;
-  }
-
-  @override
-  Future<BaseResponse<AuthResponse>> verifyOtp(Map<String, dynamic> map) async {
-    final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    _data.addAll(map);
-    final _options = _setStreamType<BaseResponse<AuthResponse>>(
-      Options(method: 'POST', headers: _headers, extra: _extra)
-          .compose(
-            _dio.options,
-            'email/verify',
+            'auth/register',
             queryParameters: queryParameters,
             data: _data,
           )

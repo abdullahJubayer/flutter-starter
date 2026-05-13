@@ -11,6 +11,4 @@ final sl = GetIt.instance;
 )
 Future<void> injectableConfig() async {
   sl.init();
-  // await setupNetworkModule();
-  // await setupStorage();
 }

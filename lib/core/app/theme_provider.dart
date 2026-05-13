@@ -9,7 +9,7 @@ final themeProvider = FutureProvider<ThemeMode>((ref) async {
   final storageService = sl<ILocalStorageService>();
   final themeIndex = await storageService.getData(_themeKey) as int?;
   if (themeIndex == null) {
-    return ThemeMode.dark;
+    return ThemeMode.light;
   }
   return ThemeMode.values[themeIndex];
 });
