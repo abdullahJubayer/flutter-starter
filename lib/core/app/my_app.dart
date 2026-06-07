@@ -16,7 +16,7 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
     final locale = ref.watch(localeProvider);
-    const environment = String.fromEnvironment('ENV', defaultValue: 'stage');
+    const environment = String.fromEnvironment('ENV', defaultValue: 'dev');
 
     return themeMode.when(
       data: (theme) {

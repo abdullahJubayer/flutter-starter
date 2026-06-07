@@ -1,6 +1,6 @@
+import 'package:flutter_template/core/di/injection_container.config.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
-import 'injection_container.config.dart';
 
 final sl = GetIt.instance;
 
@@ -9,6 +9,4 @@ final sl = GetIt.instance;
   preferRelativeImports: true,
   asExtension: true,
 )
-Future<void> injectableConfig() async {
-  sl.init();
-}
+Future<void> configureDependencies() async => sl.init();

@@ -25,13 +25,12 @@ dependencies:
   retrofit: ^4.9.2
 
   # State management
-  riverpod_annotation: ^4.0.0
   flutter_riverpod: ^3.1.0
+  riverpod_annotation: ^4.0.0
 
-  # Storage and secure env
+  # Storage
   shared_preferences: ^2.5.4
   flutter_secure_storage: ^10.2.0
-  flutter_secure_dotenv: ^2.0.0
 
   # Serialization
   json_annotation: ^4.9.0
@@ -56,6 +55,7 @@ dependencies:
   vector_graphics: any
   logger: ^2.7.0
   web_socket_channel: ^3.0.3
+  flutter_dotenv: ^6.0.1
 
 dev_dependencies:
   flutter_test:
@@ -71,7 +71,6 @@ dev_dependencies:
   injectable_generator: ^2.9.1
   retrofit_generator: ^10.2.1
   json_serializable: ^6.6.0
-  flutter_secure_dotenv_generator: ^2.0.0
 
   # App icon
   flutter_launcher_icons: ^0.14.4
@@ -97,6 +96,7 @@ flutter:
   uses-material-design: true
 
   assets:
+    - environments/
     - assets/logo/
     - assets/icons/
     - assets/animations/

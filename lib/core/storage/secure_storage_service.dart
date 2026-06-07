@@ -2,7 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 import 'i_local_storage_service.dart';
 
-@LazySingleton(as: ILocalStorageService)
+@Singleton(as: ILocalStorageService)
 @Named('secure')
 class SecureStorageService implements ILocalStorageService {
   final FlutterSecureStorage secureStorage;

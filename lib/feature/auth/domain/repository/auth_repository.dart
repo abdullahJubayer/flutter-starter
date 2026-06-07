@@ -1,29 +1,15 @@
 import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
 import 'package:flutter_template/feature/auth/domain/model/base_response.dart';
+import 'package:flutter_template/feature/auth/domain/model/login_request.dart';
+import 'package:flutter_template/feature/auth/domain/model/register_request.dart';
+import 'package:flutter_template/feature/auth/domain/model/user_model.dart';
 
 abstract class AuthRepository {
-  Future<BaseResponse<AuthResponse>> login({
-    required String email,
-    required String password,
-    required String phone,
-  });
+  Future<BaseResponse<AuthResponse>> login(LoginRequest request);
 
-  Future<BaseResponse<AuthResponse>> register({
-    required String firstName,
-    required String lastName,
-    required String phone,
-    required String email,
-    required String password,
-    required String passwordConfirmation,
-    required String role,
-  });
+  Future<void> register(RegisterRequest request);
 
-  Future<BaseResponse<AuthResponse>> verifyOtp({
-    required String email,
-    required String otp,
-  });
+  Future<BaseResponse<AuthResponse>> refreshToken(String token);
 
-  Future<BaseResponse<AuthResponse>> resendVerification({
-    required String email,
-  });
+  Future<BaseResponse<UserModel>> getMe();
 }

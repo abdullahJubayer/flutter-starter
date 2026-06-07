@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/extension/context_extension.dart';
 import 'package:flutter_template/core/widget/auth_input_field.dart';
 import 'package:flutter_template/core/widget/custom_button.dart';
 import 'package:flutter_template/core/widget/custom_toast.dart';
+import 'package:flutter_template/feature/auth/domain/model/login_request.dart';
 import 'package:flutter_template/feature/auth/ui/provider/auth_notifier.dart';
 import 'package:flutter_template/gen/assets.gen.dart';
 
@@ -17,27 +18,15 @@ class LoginScreen extends ConsumerStatefulWidget {
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends ConsumerState<LoginScreen>
-    with SingleTickerProviderStateMixin {
+class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _loginFormKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController(text: 'password');
-  final _phoneController = TextEditingController(text: '1234567898');
-
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
+  final _passwordController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _phoneController.dispose();
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -45,15 +34,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     FocusScope.of(context).unfocus();
 
     if (!(_loginFormKey.currentState?.validate() ?? false)) return;
-    final usePhone = _tabController.index == 1;
     final email = _emailController.text.trim();
-    final phone = _phoneController.text.trim();
     final password = _passwordController.text.trim();
-    final result = await ref.read(authProvider.notifier).login(
-          email: usePhone ? '' : email,
-          password: password,
-          phone: usePhone ? phone : '',
-        );
+
+    final loginRequest = LoginRequest(
+      email: email,
+      password: password,
+    );
+
+    final result = await ref.read(authProvider.notifier).login(loginRequest);
 
     if (mounted) {
       if (result.status) {
@@ -77,7 +66,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
     final isLoading = authState.isLoading;
 
     return Scaffold(
-      backgroundColor: colorScheme.primary,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -89,7 +77,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   child: Center(
                     child: Assets.logo.launcherIcon.image(
                       width: size.width * 0.8,
-                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -97,7 +84,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                   margin: EdgeInsets.all(16),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .3),
+                    color: colorScheme.surface.withValues(alpha: .3),
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                   ),
                   child: Form(
@@ -112,81 +99,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                               'Log-In',
                               style: theme.textTheme.headlineLarge?.copyWith(
                                 fontSize: 32,
-                                color: Colors.white,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: .06),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: Colors.white24),
-                            ),
-                            child: TabBar(
-                              onTap: (value) {
-                                setState(() {});
-                              },
-                              controller: _tabController,
-                              indicator: BoxDecoration(
-                                color: Colors.white.withValues(alpha: .3),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              indicatorSize: TabBarIndicatorSize.tab,
-                              labelColor: Colors.white,
-                              unselectedLabelColor: Colors.white70,
-                              dividerHeight: 0,
-                              tabs: const [
-                                Tab(text: 'Email'),
-                                Tab(text: 'Phone'),
-                              ],
-                            ),
-                          ),
+                        AuthInputField(
+                          key: ValueKey('email_input'),
+                          controller: _emailController,
+                          labelText: 'Email',
+                          hintText: 'Your Email',
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (textValue) {
+                            if (textValue == null || textValue.isEmpty) {
+                              return 'Email is required!';
+                            }
+                            // basic email check
+                            if (!RegExp(
+                              r"^[\w-.]+@([\w-]+\.)+[\w-]{2,4}",
+                            ).hasMatch(textValue)) {
+                              return 'Enter a valid email';
+                            }
+                            return null;
+                          },
                         ),
-                        const SizedBox(height: 12),
-                        _tabController.index == 0
-                            ? AuthInputField(
-                                key: ValueKey('email_input'),
-                                controller: _emailController,
-                                labelText: 'Email',
-                                hintText: 'Your email id',
-                                keyboardType: TextInputType.emailAddress,
-                                validator: (textValue) {
-                                  if (textValue == null || textValue.isEmpty) {
-                                    return 'Email is required!';
-                                  }
-                                  // basic email check
-                                  if (!RegExp(
-                                    r"^[\w-.]+@([\w-]+\.)+[\w-]{2,4}",
-                                  ).hasMatch(textValue)) {
-                                    return 'Enter a valid email';
-                                  }
-                                  return null;
-                                },
-                              )
-                            :
-                            // Phone input
-                            AuthInputField(
-                                key: ValueKey('phone_input'),
-                                controller: _phoneController,
-                                labelText: 'Phone',
-                                hintText: 'Your phone number',
-                                keyboardType: TextInputType.phone,
-                                validator: (textValue) {
-                                  if (textValue == null || textValue.isEmpty) {
-                                    return 'Phone is required!';
-                                  }
-                                  // basic phone check, accept digits and +
-                                  if (!RegExp(
-                                    r"^[+0-9]{6,15}",
-                                  ).hasMatch(textValue)) {
-                                    return 'Enter a valid phone number';
-                                  }
-                                  return null;
-                                },
-                              ),
                         const SizedBox(height: 4),
                         // Password field
                         AuthInputField(
@@ -210,10 +146,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                             onTap: () => context.router.pushPath(
                               AppRouter.resetPassword,
                             ),
-                            child: const Text(
+                            child: Text(
                               'Forget password?',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: colorScheme.onSurface,
                                 fontSize: 13,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -235,11 +171,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 'Don\'t have an account ? ',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Colors.white,
+                                  color: colorScheme.onSurface,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -247,11 +183,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
                                 onTap: () => context.router.pushPath(
                                   AppRouter.registration,
                                 ),
-                                child: const Text(
+                                child: Text(
                                   'Sign-up',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.white,
+                                    color: colorScheme.onSurface,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

@@ -3,6 +3,7 @@ import 'package:flutter_template/feature/auth/data/datasource/auth_remote_data_s
 import 'package:flutter_template/feature/auth/data/dto/login_request_dto.dart';
 import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
 import 'package:flutter_template/feature/auth/domain/model/base_response.dart';
+import 'package:flutter_template/feature/auth/domain/model/login_request.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({required ApiClient apiClient})
@@ -12,7 +13,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<BaseResponse<AuthResponse>> login(LoginRequestDto request) {
-    return _apiClient.login(request);
+    return _apiClient.login(
+      LoginRequest(
+        email: request.email,
+        password: request.password,
+      ),
+    );
   }
 }
 

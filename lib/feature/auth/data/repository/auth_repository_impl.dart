@@ -1,46 +1,36 @@
-import '../datasource/auth_remote_data_source.dart';
-import '../dto/login_request_dto.dart';
-import '../../domain/model/auth_response.dart';
-import '../../domain/model/base_response.dart';
-import '../../domain/repository/auth_repository.dart';
+import 'package:flutter_template/core/network/api_client.dart';
+import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
+import 'package:flutter_template/feature/auth/domain/model/base_response.dart';
+import 'package:flutter_template/feature/auth/domain/model/login_request.dart';
+import 'package:flutter_template/feature/auth/domain/model/register_request.dart';
+import 'package:flutter_template/feature/auth/domain/model/refresh_token_request.dart';
+import 'package:flutter_template/feature/auth/domain/model/user_model.dart';
+import 'package:flutter_template/feature/auth/domain/repository/auth_repository.dart';
+import 'package:injectable/injectable.dart';
 
+@LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
-  AuthRepositoryImpl({required AuthRemoteDataSource remoteDataSource})
-      : _remoteDataSource = remoteDataSource;
+  final ApiClient _apiClient;
 
-  final AuthRemoteDataSource _remoteDataSource;
+  AuthRepositoryImpl(this._apiClient);
 
   @override
-  Future<BaseResponse<AuthResponse>> login(
-      {required String email,
-      required String password,
-      required String phone}) async {
-    return _remoteDataSource.login(
-      LoginRequestDto(email: email, password: password, phone: phone),
-    );
+  Future<BaseResponse<AuthResponse>> login(LoginRequest request) {
+    return _apiClient.login(request);
   }
 
   @override
-  Future<BaseResponse<AuthResponse>> register(
-      {required String firstName,
-      required String lastName,
-      required String phone,
-      required String email,
-      required String password,
-      required String passwordConfirmation,
-      required String role}) async {
-    return BaseResponse(status: false, message: 'Not implemented', data: null);
+  Future<void> register(RegisterRequest request) {
+    return _apiClient.register(request);
   }
 
   @override
-  Future<BaseResponse<AuthResponse>> verifyOtp(
-      {required String email, required String otp}) async {
-    return BaseResponse(status: false, message: 'Not implemented', data: null);
+  Future<BaseResponse<AuthResponse>> refreshToken(String token) {
+    return _apiClient.refreshToken(RefreshTokenRequest(refreshToken: token));
   }
 
   @override
-  Future<BaseResponse<AuthResponse>> resendVerification(
-      {required String email}) async {
-    return BaseResponse(status: false, message: 'Not implemented', data: null);
+  Future<BaseResponse<UserModel>> getMe() {
+    return _apiClient.getMe();
   }
 }

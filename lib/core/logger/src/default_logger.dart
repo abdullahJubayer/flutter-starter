@@ -6,13 +6,12 @@ import 'i_logger.dart';
 class DefaultLogger implements ILogger {
   final Logger _logger = Logger(
     printer: PrettyPrinter(
-      methodCount: 2, // number of method calls to be displayed
-      errorMethodCount: 8, // number of method calls if stacktrace is provided
-      lineLength: 120, // width of the output
-      colors: true, // Colorful log messages
-      printEmojis: true, // Print an emoji for each log message
-      printTime: true, // Should each log print contain a timestamp
-      stackTraceBeginIndex: 1, // Skip the first frame (DefaultLogger)
+      methodCount: 2,
+      errorMethodCount: 8,
+      lineLength: 120,
+      colors: false,
+      printEmojis: false,
+      stackTraceBeginIndex: 1
     ),
   );
 
@@ -55,9 +54,7 @@ class DefaultLogger implements ILogger {
     StackTrace? stackTrace,
   }) {
     _logger.i(
-      _formatMessage(message, tag),
-      error: error,
-      stackTrace: stackTrace,
+      _formatMessage(message, tag)
     );
   }
 
@@ -70,8 +67,7 @@ class DefaultLogger implements ILogger {
   }) {
     _logger.w(
       _formatMessage(message, tag),
-      error: error,
-      stackTrace: stackTrace,
+      error: error
     );
   }
 

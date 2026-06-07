@@ -6,6 +6,7 @@ import 'package:flutter_template/core/utils/extension/context_extension.dart';
 import 'package:flutter_template/core/widget/auth_input_field.dart';
 import 'package:flutter_template/core/widget/custom_button.dart';
 import 'package:flutter_template/core/widget/custom_toast.dart';
+import 'package:flutter_template/feature/auth/domain/model/register_request.dart';
 import 'package:flutter_template/feature/auth/ui/provider/auth_notifier.dart';
 import 'package:flutter_template/gen/assets.gen.dart';
 
@@ -19,45 +20,35 @@ class RegistrationScreen extends ConsumerStatefulWidget {
 
 class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _firstNameController = TextEditingController();
-  final _lastNameController = TextEditingController();
+  final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _passwordConfirmController = TextEditingController();
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
+    _fullNameController.dispose();
     _emailController.dispose();
-    _phoneController.dispose();
     _passwordController.dispose();
-    _passwordConfirmController.dispose();
     super.dispose();
   }
 
   void submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    final firstName = _firstNameController.text.trim();
-    final lastName = _lastNameController.text.trim();
+    final fullName = _fullNameController.text.trim();
     final email = _emailController.text.trim();
-    final phone = _phoneController.text.trim();
     final password = _passwordController.text.trim();
-    final passwordConfirmation = _passwordConfirmController.text.trim();
 
-    final res = await ref.read(authProvider.notifier).register(
-          firstName: firstName,
-          lastName: lastName,
-          phone: phone,
-          email: email,
-          password: password,
-          passwordConfirmation: passwordConfirmation,
-          role: 'member',
-        );
+    final registerRequest = RegisterRequest(
+      email: email,
+      fullName: fullName,
+      password: password,
+    );
+
+    final res = await ref.read(authProvider.notifier).register(registerRequest);
 
     if (!mounted) return;
     if (res.status) {
+      context.router.pushPath(AppRouter.login);
     } else {
       CustomToast.error(msg: res.error);
     }
@@ -72,7 +63,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
     final isLoading = authState.isLoading;
 
     return Scaffold(
-      backgroundColor: colorScheme.primary,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -85,7 +75,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                   child: Center(
                     child: Assets.logo.launcherIcon.image(
                       width: size.width * 0.8,
-                      color: Colors.white,
                     ),
                   ),
                 ),
@@ -108,30 +97,17 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                               'Registration',
                               style: theme.textTheme.headlineLarge?.copyWith(
                                 fontSize: 32,
-                                color: Colors.white,
                               ),
                             ),
                           ),
                         ),
                         AuthInputField(
-                          controller: _firstNameController,
-                          labelText: 'First Name',
-                          hintText: 'Your first name',
+                          controller: _fullNameController,
+                          labelText: 'Full Name',
+                          hintText: 'Your full name',
                           validator: (textValue) {
                             if (textValue == null || textValue.isEmpty) {
-                              return 'First name is required!';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        AuthInputField(
-                          controller: _lastNameController,
-                          labelText: 'Last Name',
-                          hintText: 'Your last name',
-                          validator: (textValue) {
-                            if (textValue == null || textValue.isEmpty) {
-                              return 'Last name is required!';
+                              return 'Full name is required!';
                             }
                             return null;
                           },
@@ -155,22 +131,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                         ),
                         const SizedBox(height: 16),
                         AuthInputField(
-                          controller: _phoneController,
-                          labelText: 'Phone Number',
-                          hintText: 'Your phone number',
-                          keyboardType: TextInputType.phone,
-                          validator: (textValue) {
-                            if (textValue == null || textValue.isEmpty) {
-                              return 'Phone is required!';
-                            }
-                            if (!RegExp(r"^[+0-9]{6,15}").hasMatch(textValue)) {
-                              return 'Enter a valid phone number';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        AuthInputField(
                           controller: _passwordController,
                           labelText: 'Password',
                           hintText: 'Your password',
@@ -182,23 +142,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                             }
                             if (textValue.length < 6) {
                               return 'Password must be at least 6 characters';
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        AuthInputField(
-                          controller: _passwordConfirmController,
-                          labelText: 'Confirm Password',
-                          hintText: 'Confirm your password',
-                          obscureText: true,
-                          suffixIcon: true,
-                          validator: (textValue) {
-                            if (textValue == null || textValue.isEmpty) {
-                              return 'Password confirmation is required!';
-                            }
-                            if (textValue != _passwordController.text) {
-                              return 'Passwords do not match';
                             }
                             return null;
                           },
@@ -222,7 +165,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                                 'Already have an account? ',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -233,7 +175,6 @@ class _RegistrationScreenState extends ConsumerState<RegistrationScreen> {
                                   'Sign In',
                                   style: TextStyle(
                                     fontSize: 15,
-                                    color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),

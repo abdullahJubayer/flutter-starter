@@ -5,8 +5,10 @@ import 'package:flutter_template/core/app_route/app_route.gr.dart';
 import 'package:flutter_template/core/auth/i_session_service.dart';
 import 'package:flutter_template/core/constants/core_constants.dart';
 import 'package:flutter_template/core/logger/app_logging.dart';
-import 'package:flutter_template/core/network/refresh_token_request.dart';
 import 'package:flutter_template/core/widget/session_expire_dialog.dart';
+import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
+import 'package:flutter_template/feature/auth/domain/model/base_response.dart';
+import 'package:flutter_template/feature/auth/domain/model/refresh_token_request.dart';
 
 class AuthHeaderInterceptor extends InterceptorsWrapper {
   AuthHeaderInterceptor({required ISessionService sessionService})
@@ -96,16 +98,16 @@ class AuthRefreshInterceptor extends InterceptorsWrapper {
           data: RefreshTokenRequest(refreshToken: refreshToken).toJson(),
         );
 
-        if (resp.statusCode == 200) {
-          final data = resp.data as Map<String, dynamic>;
-          final newAccessToken = data['accessToken'] as String? ?? '';
-          final newRefreshToken = data['refreshToken'] as String?;
+        if (resp.statusCode == 200 && resp.data != null) {
+          final data = BaseResponse<AuthResponse>.fromJson(
+            resp.data,(json) => AuthResponse.fromJson(json as Map<String, dynamic>),
+          );
+          final newAccessToken = data.data?.accessToken;
+          final newRefreshToken = data.data?.refreshToken;
 
           await _sessionService.saveSession(
-            accessToken: newAccessToken.isNotEmpty ? newAccessToken : null,
-            refreshToken: newRefreshToken != null && newRefreshToken.isNotEmpty
-                ? newRefreshToken
-                : null,
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
           );
 
           requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
