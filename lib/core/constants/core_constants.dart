@@ -1,6 +1,7 @@
 class CoreConstants {
   static const String defaultLanguageCode = 'en';
 
+  static const String themeModeKey = 'theme_mode';
   // Key used to store selected language code in local storage
   static const String languageCodeKey = 'language_code';
   // Access token key (stored in shared preferences)

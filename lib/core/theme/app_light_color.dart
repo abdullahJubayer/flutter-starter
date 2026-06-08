@@ -9,138 +9,138 @@ class AppLightColors {
   AppLightColors._();
 
   // =======================================================
-  // PRIMARY (Orange)
+  // PRIMARY (WhatsApp Green)
   // =======================================================
 
-  static const Color primary = Color(0xFFFF7729);
+  static const Color primary = Color(0xFF25D366);
 
-  static const MaterialColor primaryPalette = MaterialColor(0xFFFF7729, {
-    50: Color(0xFFFFF0E7),
-    100: Color(0xFFFFE3D1),
-    200: Color(0xFFFFD0A8),
-    300: Color(0xFFFFB77F),
-    400: Color(0xFFFF9E56),
-    500: Color(0xFFFF7729),
-    600: Color(0xFFE66A24),
-    700: Color(0xFFCC5D1F),
-    800: Color(0xFFB3501A),
-    900: Color(0xFF994315),
+  static const MaterialColor primaryPalette = MaterialColor(0xFF25D366, {
+    50: Color(0xFFE7F9EF),
+    100: Color(0xFFC3F1D7),
+    200: Color(0xFF9AE8BD),
+    300: Color(0xFF6FDEA2),
+    400: Color(0xFF4DD78D),
+    500: Color(0xFF25D366),
+    600: Color(0xFF1FC15C),
+    700: Color(0xFF18AD50),
+    800: Color(0xFF129944),
+    900: Color(0xFF0A7731),
   });
 
   // =======================================================
-  // SECONDARY (Blue Gray)
+  // SECONDARY (WhatsApp Teal)
   // =======================================================
 
-  static const Color secondary = Color(0xFF637381);
+  static const Color secondary = Color(0xFF128C7E);
 
-  static const MaterialColor secondaryPalette = MaterialColor(0xFF637381, {
-    50: Color(0xFFF8FAFC),
-    100: Color(0xFFF1F5F9),
-    200: Color(0xFFE2E8F0),
-    300: Color(0xFFCBD5E1),
-    400: Color(0xFF94A3B8),
-    500: Color(0xFF637381),
-    600: Color(0xFF535862),
-    700: Color(0xFF414651),
-    800: Color(0xFF334155),
-    900: Color(0xFF1E293B),
+  static const MaterialColor secondaryPalette = MaterialColor(0xFF128C7E, {
+    50: Color(0xFFE4F4F2),
+    100: Color(0xFFBCE3DE),
+    200: Color(0xFF8DD0C8),
+    300: Color(0xFF5DBCB1),
+    400: Color(0xFF39AD9F),
+    500: Color(0xFF128C7E),
+    600: Color(0xFF108174),
+    700: Color(0xFF0D7567),
+    800: Color(0xFF0A695B),
+    900: Color(0xFF075E54),
   });
 
   // =======================================================
-  // TERTIARY (Gold)
+  // TERTIARY (Accent Mint)
   // =======================================================
 
-  static const Color tertiary = Color(0xFFA67931);
+  static const Color tertiary = Color(0xFF34B7A7);
 
-  static const MaterialColor tertiaryPalette = MaterialColor(0xFFA67931, {
-    50: Color(0xFFFAF8F5),
-    100: Color(0xFFF2ECE1),
-    200: Color(0xFFEBDDCC),
-    300: Color(0xFFE1C5A1),
-    400: Color(0xFFD6B17D),
-    500: Color(0xFFC89D58),
-    600: Color(0xFFA67931),
-    700: Color(0xFF805B20),
-    800: Color(0xFF593B0B),
-    900: Color(0xFF402A04),
+  static const MaterialColor tertiaryPalette = MaterialColor(0xFF34B7A7, {
+    50: Color(0xFFE7F7F5),
+    100: Color(0xFFC2EBE6),
+    200: Color(0xFF98DED6),
+    300: Color(0xFF6DD1C5),
+    400: Color(0xFF4CC7B8),
+    500: Color(0xFF34B7A7),
+    600: Color(0xFF2EA89A),
+    700: Color(0xFF269587),
+    800: Color(0xFF1F8375),
+    900: Color(0xFF146458),
   });
 
   // =======================================================
   // ERROR
   // =======================================================
 
-  static const Color error = Color(0xFFFF5630);
+  static const Color error = Color(0xFFE53935);
 
-  static const MaterialColor errorPalette = MaterialColor(0xFFFF5630, {
-    50: Color(0xFFFFEDE8),
-    100: Color(0xFFFFD1C7),
-    200: Color(0xFFFFB3A6),
-    300: Color(0xFFFF9485),
-    400: Color(0xFFFF7A64),
-    500: Color(0xFFFF5630),
-    600: Color(0xFFE64D2B),
-    700: Color(0xFFCC4426),
-    800: Color(0xFFB33B21),
-    900: Color(0xFF99321C),
+  static const MaterialColor errorPalette = MaterialColor(0xFFE53935, {
+    50: Color(0xFFFFEBEE),
+    100: Color(0xFFFFCDD2),
+    200: Color(0xFFEF9A9A),
+    300: Color(0xFFE57373),
+    400: Color(0xFFEF5350),
+    500: Color(0xFFE53935),
+    600: Color(0xFFD32F2F),
+    700: Color(0xFFC62828),
+    800: Color(0xFFB71C1C),
+    900: Color(0xFF8E0000),
   });
 
   // =======================================================
   // SUCCESS
   // =======================================================
 
-  static const Color success = Color(0xFF00CA5A);
+  static const Color success = Color(0xFF25D366);
 
-  static const MaterialColor successPalette = MaterialColor(0xFF00CA5A, {
-    50: Color(0xFFE6F9F0),
-    100: Color(0xFFCCF3E1),
-    200: Color(0xFF99E7C3),
-    300: Color(0xFF66DBA5),
-    400: Color(0xFF33CF87),
-    500: Color(0xFF00CA5A),
-    600: Color(0xFF00B550),
-    700: Color(0xFF00A046),
-    800: Color(0xFF008B3C),
-    900: Color(0xFF007632),
+  static const MaterialColor successPalette = MaterialColor(0xFF25D366, {
+    50: Color(0xFFE7F9EF),
+    100: Color(0xFFC3F1D7),
+    200: Color(0xFF9AE8BD),
+    300: Color(0xFF6FDEA2),
+    400: Color(0xFF4DD78D),
+    500: Color(0xFF25D366),
+    600: Color(0xFF1FC15C),
+    700: Color(0xFF18AD50),
+    800: Color(0xFF129944),
+    900: Color(0xFF0A7731),
   });
 
   // =======================================================
   // NEUTRAL
   // =======================================================
 
-  static const MaterialColor neutralPalette = MaterialColor(0xFF637381, {
-    50: Color(0xFFFBFBFB),
-    100: Color(0xFFF9FAFB),
-    200: Color(0xFFE7E7E7),
-    300: Color(0xFFE2E8F0),
-    400: Color(0xFF919EAB),
-    500: Color(0xFF808A94),
-    600: Color(0xFF637381),
-    700: Color(0xFF535862),
-    800: Color(0xFF414651),
-    900: Color(0xFF334155),
+  static const MaterialColor neutralPalette = MaterialColor(0xFF667781, {
+    50: Color(0xFFF7F8F8),
+    100: Color(0xFFF1F2F3),
+    200: Color(0xFFE3E6E8),
+    300: Color(0xFFD5DADF),
+    400: Color(0xFF9AA6AD),
+    500: Color(0xFF7B8790),
+    600: Color(0xFF667781),
+    700: Color(0xFF54656F),
+    800: Color(0xFF41525D),
+    900: Color(0xFF2A3942),
   });
 
   // =======================================================
   // SURFACE / BACKGROUND
   // =======================================================
 
-  static const Color background = Color(0xFFF7F7F7);
+  static const Color background = Color(0xFFF0F2F5);
   static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceVariant = Color(0xFFF3F4F6);
+  static const Color surfaceVariant = Color(0xFFF7F8FA);
 
   // =======================================================
   // TEXT
   // =======================================================
 
-  static const Color textPrimary = Color(0xFF181D27);
-  static const Color textSecondary = Color(0xFF637381);
-  static const Color textDisabled = Color(0xFF919EAB);
+  static const Color textPrimary = Color(0xFF111B21);
+  static const Color textSecondary = Color(0xFF667781);
+  static const Color textDisabled = Color(0xFF9AA6AD);
 
   // =======================================================
   // BORDER
   // =======================================================
 
-  static const Color border = Color(0xFFE5E7EB);
+  static const Color border = Color(0xFFE9EDEF);
 
   // =======================================================
   // PURE COLORS
