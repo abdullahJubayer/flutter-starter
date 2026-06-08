@@ -5,21 +5,21 @@ import 'package:flutter_template/core/constants/core_constants.dart';
 import 'package:flutter_template/core/di/injection_container.dart';
 import 'package:flutter_template/core/storage/i_local_storage_service.dart';
 
-final localeProvider = NotifierProvider<LocaleNotifier, Locale>(
-  LocaleNotifier.new,
+final themeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(
+  ThemeNotifier.new,
 );
 
-class LocaleNotifier extends Notifier<Locale> {
+class ThemeNotifier extends Notifier<ThemeMode> {
   late final ILocalStorageService storage;
 
   @override
-  Locale build() {
+  ThemeMode build() {
     storage = sl<ILocalStorageService>();
-    return ref.watch(appConfigProvider).locale;
+    return ref.watch(appConfigProvider).themeMode;
   }
 
-  Future<void> setLocale(Locale locale) async {
-    state = locale;
-    await storage.setData(CoreConstants.languageCodeKey, locale.languageCode);
+  Future<void> setTheme(ThemeMode mode) async {
+    state = mode;
+    await storage.setData(CoreConstants.themeModeKey, mode.index.toString());
   }
 }
