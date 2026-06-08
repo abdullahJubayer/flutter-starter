@@ -19,10 +19,9 @@ class CustomBackButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomCard(
       onTap: onTap ?? () => context.router.maybePop(),
-      backgroundColor: backgroundColor ?? context.appColors.primary.withOpacity(.1),
-      padding: const EdgeInsets.fromLTRB(14, 10, 6, 10),
+      padding: const EdgeInsets.fromLTRB(0, 10, 6, 10),
       child: Icon(
-        Icons.arrow_back_ios,
+        Icons.arrow_back,
         color: iconColor ?? Colors.black,
       ),
     );

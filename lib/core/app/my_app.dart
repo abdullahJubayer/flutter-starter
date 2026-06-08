@@ -6,6 +6,7 @@ import 'package:flutter_template/core/theme/theme_data.dart';
 import 'package:flutter_template/core/theme/theme_provider.dart';
 import 'package:flutter_template/core/widget/custom_toast.dart';
 import 'package:flutter_template/l10n/app_localizations.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'lifecycle_manager.dart';
 
@@ -44,15 +45,18 @@ class _MyAppState extends ConsumerState<MyApp> {
         supportedLocales: AppLocalizations.supportedLocales,
         localizationsDelegates: const [AppLocalizations.delegate],
         builder: (context, child) {
+          final toastBuilder = FToastBuilder();
+          final builtChild = toastBuilder(context, child);
+
           if (environment != 'prod') {
             return Banner(
               color: Theme.of(context).colorScheme.primary,
               message: 'DEV',
               location: BannerLocation.topEnd,
-              child: child!,
+              child: builtChild,
             );
           }
-          return child!;
+          return builtChild;
         },
       ),
     );
