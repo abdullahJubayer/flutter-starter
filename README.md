@@ -183,6 +183,38 @@ LoginScreen
 - **`auth_remote_data_source.dart`**: performs the remote API call
 - **`api_client.dart`**: defines the Retrofit endpoints
 
+## 🚀 App Startup Process
+
+The app startup flow is split between `lib/main.dart`, `lib/core/app/bootstrapper_app.dart`, and `lib/core/app/my_app.dart`.
+
+### Startup sequence
+
+```text
+main.dart
+  → WidgetsFlutterBinding.ensureInitialized()
+  → BootstrapperApp.init()
+  → bootstrap.loadAppConfig()
+  → ProviderScope(overrides: appConfigProvider)
+  → MyApp
+  → MaterialApp.router(builder: FToastBuilder + optional DEV banner)
+```
+
+### Why `bootstrap.loadAppConfig()` is used
+
+`bootstrap.loadAppConfig()` reads the saved theme and locale from storage before the app is rendered.
+This means the first frame already respects the user’s preferences instead of briefly showing a default theme or language and then switching later.
+
+### Why `ProviderScope` uses `overrides`
+
+`ProviderScope` injects the loaded `AppConfig` into `appConfigProvider` through `overrides`.
+That makes the initial theme and locale available to Riverpod providers immediately, so `themeProvider` and `localeProvider` can build the UI with the correct runtime values from the start.
+
+### Why the `toastBuilder` approach is used
+
+In `MyApp`, `MaterialApp.router` uses a `builder` that wraps the routed content with `FToastBuilder()`.
+This keeps toast rendering available app-wide without needing to add toast setup to every screen.
+The same builder also adds the `DEV` banner in non-production builds, so both toast support and environment labeling are handled in one place.
+
 ---
 
 ## 🔐 Secure Environment Setup
