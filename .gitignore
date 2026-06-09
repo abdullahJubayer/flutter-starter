@@ -47,3 +47,4 @@ app.*.map.json
 # Local env and secret files (do not commit these)
 environments/.env.dev
 environments/.env.prod
+lib/core/env/env.g.dart

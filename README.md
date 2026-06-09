@@ -217,42 +217,53 @@ The same builder also adds the `DEV` banner in non-production builds, so both to
 
 ---
 
-## 🔐 Secure Environment Setup
+## 🔐 Environment Setup (Dev / Prod)
 
-This template uses a secure environment workflow for API configuration and other sensitive values.
+This template uses `envied` with files under `environments/`:
 
-### Recommended workflow
+- `environments/.env.dev`
+- `environments/.env.prod`
+- `environments/.env.example`
 
-1. Add the secure env dependencies in `pubspec.yaml`:
+Use `build_runner` with `--define` to select which env file `envied` reads.
 
-   ```yaml
-   dependencies:
-     flutter_secure_dotenv: ^2.0.0
+### Build with development environment
 
-   dev_dependencies:
-     build_runner: ^2.4.14
-     flutter_secure_dotenv_generator: ^2.0.0
+1. Regenerate `lib/core/env/env.g.dart` using the dev env file:
+
+   ```bash
+   dart run build_runner build --delete-conflicting-outputs \
+   --define=envied_generator:envied=path=environments/.env.dev
    ```
 
-2. Generate or receive the temporary `encryption_key.json` only as a transfer step.
-3. Copy the key into a local gitignored env file such as `lib/core/config/env.dart`.
-4. Delete `encryption_key.json` immediately after copying it, or keep it fully gitignored.
-5. Keep the env access behind a small wrapper like `lib/core/config/secure_env.dart` so the rest of the app does not depend on raw key files.
+2. Run or build:
 
-### Important security note
+   ```bash
+   flutter run
+   flutter build apk --debug
+   ```
 
-- Never ship `encryption_key.json` inside the APK or IPA bundle.
-- A JSON file in the app package is plaintext and can be extracted with a simple unzip.
-- The key is still present in the compiled binary, so this only raises the effort required to recover it.
-- `--obfuscate` can make extraction harder, but it cannot make client-side secrets impossible to find.
-- For maximum protection, fetch the key from a server at runtime instead of bundling it with the app.
+### Build with production environment
 
-### Suggested ignore rules
+1. Regenerate `lib/core/env/env.g.dart` using the prod env file:
 
-```gitignore
-encryption_key.json
-lib/core/config/env.dart
-```
+   ```bash
+   dart run build_runner build --delete-conflicting-outputs \
+   --define=envied_generator:envied=path=environments/.env.prod
+   ```
+
+2. Build release artifacts:
+
+   ```bash
+   flutter build apk --release
+   flutter build ios --release
+   ```
+
+### Notes
+
+- Re-run the same `build_runner` command for the target environment whenever values change.
+- `environments/.env.dev` and `environments/.env.prod` are ignored in git.
+- Keep `environments/.env.example` committed as the template for teammates.
 
 ---
 
