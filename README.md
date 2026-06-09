@@ -546,3 +546,111 @@ final refreshToken = await secureStorage.read(key: CoreConstants.refreshTokenKey
 - [Flutter Secure Storage](https://pub.dev/packages/flutter_secure_storage)
 - [Logging Package](https://pub.dev/packages/logging)
 
+# 🔐 NDK Secret (Native Embedded Key)
+
+This project stores sensitive keys inside the native C/C++ layer, compiled into:
+- Android `.so` (NDK)
+- iOS `.xcframework`
+
+This removes secrets from Dart/Flutter source and makes casual extraction harder.
+
+---
+
+# ⚠️ SECURITY WARNING (READ FIRST)
+
+Storing secrets inside a mobile app is **never fully secure or recommended for sensitive credentials**.
+
+Even with native code (NDK / iOS):
+
+- ❌ Secret is still inside the app binary
+- ❌ Can be extracted using reverse engineering tools (Ghidra, Hopper, strings)
+- ❌ Can be accessed from memory at runtime
+- ❌ Provides obfuscation, NOT real security
+
+👉 **Client-side secrets should NOT be treated as truly confidential**
+
+---
+
+# ⚙️ WHEN TO USE THIS APPROACH
+
+Use native secret storage ONLY when:
+
+- You need a client-side identifier or static key
+- You want to increase reverse engineering effort
+- You accept that it is NOT fully secure
+
+---
+
+# 🧩 IMPLEMENTATION
+
+## 1. Create Secret Header
+
+```bash
+mkdir -p ndk_secret
+cat > ndk_secret/secrets.h <<'EOF'
+#ifndef SECRETS_H
+#define SECRETS_H
+
+inline const char* get_native_secret() {
+    return "YOUR_NEW_SECURE_KEY_GOES_HERE";
+}
+
+#endif
+EOF
+
+2. Native Bridge (C++)
+
+#include <cstring>
+#include <cstdlib>
+#include "secrets.h"
+
+extern "C"
+char* native_get_secret() {
+    const char* secret = get_native_secret();
+
+    size_t len = strlen(secret) + 1;
+    char* result = (char*) malloc(len);
+
+    if (result) {
+        snprintf(result, len, "%s", secret);
+    }
+
+    return result;
+}
+
+3. Dart FFI Usage
+
+import 'dart:ffi';
+import 'dart:io';
+import 'package:ffi/ffi.dart';
+
+typedef NativeGetSecret = Pointer<Utf8> Function();
+typedef DartGetSecret = Pointer<Utf8> Function();
+
+class NativeBridge {
+  static final DynamicLibrary _lib = Platform.isAndroid
+      ? DynamicLibrary.open("libnative_bridge.so")
+      : DynamicLibrary.process();
+
+  static final DartGetSecret _getSecret = _lib
+      .lookup<NativeFunction<NativeGetSecret>>('native_get_secret')
+      .asFunction();
+
+  static String getSecret() {
+    final ptr = _getSecret();
+    return ptr.toDartString();
+  }
+}
+
+# Android
+flutter clean
+flutter pub get
+flutter run
+
+# iOS
+./scripts/build_ios.sh
+cd ios
+pod install
+cd ..
+flutter run
+
