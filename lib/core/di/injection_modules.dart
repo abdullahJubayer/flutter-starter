@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_template/core/auth/i_session_service.dart';
+import 'package:flutter_template/core/env/env.dart';
 import 'package:flutter_template/core/network/interceptor.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +17,7 @@ abstract class RegisterModule {
 
   @singleton
   Dio dio(ISessionService sessionService) {
-    final d = Dio(BaseOptions(baseUrl: dotenv.get('BASE_URL')));
+    final d = Dio(BaseOptions(baseUrl: Env.baseUrl));
 
     d.interceptors.addAll([
       AuthHeaderInterceptor(sessionService: sessionService),
