@@ -1,30 +1,34 @@
 # flutter_template
 
-A Flutter project template with a clean authentication architecture, automatic token refresh, comprehensive logging, and session management.
-
-## Getting Started
-
-This project is a starting point for a Flutter application with enterprise-level features.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+A Flutter project template with clean authentication architecture, automatic token refresh, comprehensive logging, and session management.
 
 ---
 
-## 🔧 Flutter & Dart Versions
+## 📋 Table of Contents
 
-This project requires specific Flutter and Dart versions for compatibility.
+1. [Requirements](#-requirements)
+2. [Project Setup](#-project-setup)
+3. [Environment Configuration](#-environment-configuration)
+4. [Architecture Overview](#-architecture-overview)
+5. [App Startup Process](#-app-startup-process)
+6. [Authentication & Token Flow](#-authentication--token-flow)
+7. [Token Storage](#-token-storage)
+8. [Logger Usage](#-logger-usage)
+9. [NDK Native Secret](#-ndk-native-secret)
+10. [Device Preview](#-device-preview)
+11. [Security Gate](#-security-gate)
+12. [Libraries Used](#-libraries-used)
+13. [Best Practices](#-best-practices)
+14. [Additional Resources](#-additional-resources)
 
-### Version Requirements
+---
 
-- **Flutter**: 3.19.0 or higher
-- **Dart**: 3.3.0 or higher
+## ✅ Requirements
+
+| Tool    | Minimum Version |
+|---------|----------------|
+| Flutter | 3.19.0         |
+| Dart    | 3.3.0          |
 
 ### Check Current Versions
 
@@ -33,134 +37,135 @@ flutter --version
 dart --version
 ```
 
-### Using FVM (Flutter Version Manager)
+---
 
-FVM allows you to manage multiple Flutter SDK versions easily.
+## 🚀 Project Setup
 
-#### Install FVM
+### Step 1 — Install FVM (Flutter Version Manager)
+
+FVM lets you manage multiple Flutter SDK versions per project.
 
 ```bash
-# Using Homebrew (macOS/Linux)
+# macOS / Linux
 brew tap leoafonso/fvm
 brew install fvm
 
-# Using Chocolatey (Windows)
+# Windows
 choco install fvm
 ```
 
-#### Setup FVM in this Project
+### Step 2 — Pin the Flutter Version
 
 ```bash
-# Set Flutter version for this project
 fvm install 3.19.0
 fvm use 3.19.0
-
-# Or use the `.fvmrc` file if it exists
-fvm use
 ```
 
-#### Run Flutter Commands with FVM
+> If the project has an `.fvmrc` file, run `fvm use` and it picks the version automatically.
+
+### Step 3 — Install Dependencies
 
 ```bash
-# Instead of: flutter pub get
 fvm flutter pub get
-
-# Instead of: flutter run
-fvm flutter run
-
-# Instead of: flutter build apk
-fvm flutter build apk
 ```
 
-## 📋 Features
+### Step 4 — Run the App
 
-- **Clean Architecture Auth Flow**: UI, domain, and data layers are separated for login and future auth features
-- **Use Case Driven Login**: The login screen calls a Riverpod notifier, which calls a domain use case
-- **Repository + Datasource Split**: The repository delegates to a remote datasource for API access
-- **Automatic Token Refresh**: Seamlessly refresh access tokens without user intervention
-- **Comprehensive Logging**: Structured logging for API requests, responses, and errors
-- **Session Management**: Automatic session expiration handling with user-friendly dialogs
-- **Dio Interceptor**: Request/response interception for authentication and logging
-- **Secure Token Storage**: Flutter Secure Storage for sensitive credentials
+```bash
+fvm flutter run
+```
+
+> Replace every `flutter` command with `fvm flutter` throughout the project to use the pinned version.
 
 ---
 
-## 📚 Libraries Used
+## 🔐 Environment Configuration
 
-The template uses a small set of packages grouped by responsibility:
+The project uses `envied` to embed environment variables at build time. Environment files live under `environments/`:
 
-### State Management
-- `flutter_riverpod`
-- `riverpod_annotation`
-- `riverpod_generator`
-- `riverpod_lint`
+| File | Purpose |
+|------|---------|
+| `environments/.env.dev` | Development values (git-ignored) |
+| `environments/.env.prod` | Production values (git-ignored) |
+| `environments/.env.example` | Committed template for teammates |
 
-### Dependency Injection
-- `get_it`
-- `injectable`
-- `injectable_generator`
+### Step 1 — Copy the example file
 
-### Networking
-- `dio`
-- `retrofit`
-- `retrofit_generator`
+```bash
+cp environments/.env.example environments/.env.dev
+# Fill in your values
+```
 
-### Storage and Secure Env
-- `shared_preferences`
-- `flutter_secure_storage`
-- `flutter_secure_dotenv`
-- `flutter_secure_dotenv_generator`
+### Step 2 — Generate for Development
 
-### Routing and Localization
-- `auto_route`
-- `auto_route_generator`
-- `flutter_localizations`
+```bash
+dart run build_runner build --delete-conflicting-outputs \
+  --define=envied_generator:envied=path=environments/.env.dev
+```
 
-### UI and Utilities
-- `flutter_svg`
-- `lottie`
-- `fluttertoast`
-- `google_fonts`
-- `cached_network_image`
-- `url_launcher`
-- `path_provider`
-- `skeletonizer`
-- `flutter_widget_from_html`
-- `flutter_expandable_fab`
-- `font_awesome_flutter`
-- `intl`
-- `collection`
-- `logging`
-- `logger`
+### Step 3 — Run or Build (Dev)
+
+```bash
+flutter run
+flutter build apk --debug
+```
+
+### Step 4 — Generate for Production
+
+```bash
+dart run build_runner build --delete-conflicting-outputs \
+  --define=envied_generator:envied=path=environments/.env.prod
+```
+
+### Step 5 — Build Release Artifacts
+
+```bash
+flutter build apk --release
+flutter build ios --release
+```
+
+> Re-run the matching `build_runner` command each time env values change.
 
 ---
 
 ## 🧱 Architecture Overview
 
-This template uses a clean architecture structure for auth and login:
+The template follows clean architecture, separating UI, domain, and data layers.
 
-```text
-Presentation/UI
+```
+Presentation / UI
   └─ feature/auth/ui/login/login_screen.dart
-       ↓
-State/Controller
+        ↓
+State / Controller
   └─ feature/auth/ui/provider/auth_notifier.dart
-       ↓
+        ↓
 Domain
   └─ feature/auth/domain/usecase/login_usecase.dart
-       └─ feature/auth/domain/repository/auth_repository.dart
-       ↓
+  └─ feature/auth/domain/repository/auth_repository.dart
+        ↓
 Data
   └─ feature/auth/data/repository/auth_repository_impl.dart
-       └─ feature/auth/data/datasource/auth_remote_data_source_impl.dart
-            └─ core/network/api_client.dart
-                 ↓
-               Backend API
+  └─ feature/auth/data/datasource/auth_remote_data_source_impl.dart
+        ↓
+Network
+  └─ core/network/api_client.dart  →  Backend API
 ```
+
+### Layer Responsibilities
+
+| Layer | File | Responsibility |
+|-------|------|----------------|
+| UI | `login_screen.dart` | Collects input, validates form, reacts to state |
+| State | `auth_notifier.dart` | Controls loading state, orchestrates login call |
+| Domain | `login_usecase.dart` | Contains the business logic for login |
+| Contract | `auth_repository.dart` | Defines the interface for auth operations |
+| Data | `auth_repository_impl.dart` | Implements the contract, delegates to datasource |
+| Remote | `auth_remote_data_source.dart` | Performs the actual API call |
+| Network | `api_client.dart` | Defines Retrofit endpoints |
 
 ### Login Request Flow
 
-```text
+```
 LoginScreen
   → validates form input
   → calls AuthNotifier.login(...)
@@ -170,238 +175,83 @@ LoginScreen
   → ApiClient / Dio
   → API response
   → state update (loading / success / error)
-  → toast or navigation in the UI
+  → toast or navigation
 ```
 
-### Layer Responsibilities
+---
 
-- **`login_screen.dart`**: collects input, validates the form, and reacts to success/error
-- **`auth_notifier.dart`**: controls loading state and orchestrates the login call
-- **`login_usecase.dart`**: contains the business action for login
-- **`auth_repository.dart`**: defines the contract for auth operations
-- **`auth_repository_impl.dart`**: implements the contract and delegates to data sources
-- **`auth_remote_data_source.dart`**: performs the remote API call
-- **`api_client.dart`**: defines the Retrofit endpoints
+## ⚡ App Startup Process
 
-## 🚀 App Startup Process
+Startup is split across `main.dart`, `bootstrapper_app.dart`, and `my_app.dart`.
 
-The app startup flow is split between `lib/main.dart`, `lib/core/app/bootstrapper_app.dart`, and `lib/core/app/my_app.dart`.
-
-### Startup sequence
-
-```text
+```
 main.dart
   → WidgetsFlutterBinding.ensureInitialized()
   → BootstrapperApp.init()
-  → bootstrap.loadAppConfig()
+  → bootstrap.loadAppConfig()        ← reads saved theme & locale before first frame
   → ProviderScope(overrides: appConfigProvider)
   → MyApp
   → MaterialApp.router(builder: FToastBuilder + optional DEV banner)
 ```
 
-### Why `bootstrap.loadAppConfig()` is used
+**Why `loadAppConfig()` runs before rendering:** it reads the saved theme and locale from storage so the very first frame already reflects the user's preferences — no flash of default styles.
 
-`bootstrap.loadAppConfig()` reads the saved theme and locale from storage before the app is rendered.
-This means the first frame already respects the user’s preferences instead of briefly showing a default theme or language and then switching later.
+**Why `ProviderScope` uses `overrides`:** it injects the loaded `AppConfig` into `appConfigProvider`, making the initial theme and locale available to all Riverpod providers from the start.
 
-### Why `ProviderScope` uses `overrides`
-
-`ProviderScope` injects the loaded `AppConfig` into `appConfigProvider` through `overrides`.
-That makes the initial theme and locale available to Riverpod providers immediately, so `themeProvider` and `localeProvider` can build the UI with the correct runtime values from the start.
-
-### Why the `toastBuilder` approach is used
-
-In `MyApp`, `MaterialApp.router` uses a `builder` that wraps the routed content with `FToastBuilder()`.
-This keeps toast rendering available app-wide without needing to add toast setup to every screen.
-The same builder also adds the `DEV` banner in non-production builds, so both toast support and environment labeling are handled in one place.
+**Why `FToastBuilder` is in the root builder:** it keeps toast support app-wide without adding setup to every screen, and also injects the `DEV` banner in non-production builds — both handled in one place.
 
 ---
 
-## 🔐 Environment Setup (Dev / Prod)
+## 🔐 Authentication & Token Flow
 
-This template uses `envied` with files under `environments/`:
+### Refresh Token Flow
 
-- `environments/.env.dev`
-- `environments/.env.prod`
-- `environments/.env.example`
-
-Use `build_runner` with `--define` to select which env file `envied` reads.
-
-### Build with development environment
-
-1. Regenerate `lib/core/env/env.g.dart` using the dev env file:
-
-   ```bash
-   dart run build_runner build --delete-conflicting-outputs \
-   --define=envied_generator:envied=path=environments/.env.dev
-   ```
-
-2. Run or build:
-
-   ```bash
-   flutter run
-   flutter build apk --debug
-   ```
-
-### Build with production environment
-
-1. Regenerate `lib/core/env/env.g.dart` using the prod env file:
-
-   ```bash
-   dart run build_runner build --delete-conflicting-outputs \
-   --define=envied_generator:envied=path=environments/.env.prod
-   ```
-
-2. Build release artifacts:
-
-   ```bash
-   flutter build apk --release
-   flutter build ios --release
-   ```
-
-### Notes
-
-- Re-run the same `build_runner` command for the target environment whenever values change.
-- `environments/.env.dev` and `environments/.env.prod` are ignored in git.
-- Keep `environments/.env.example` committed as the template for teammates.
-
----
-
-## 📝 Logger Usage
-
-The project includes a custom logging system that works in both debug and release modes.
-
-### Basic Logger Usage
-
-```dart
-import 'package:flutter_template/core/logger/app_logging.dart';
-
-// Info level logging
-logger.i(
-  message: 'User login successful',
-  tag: 'Auth',
-);
-
-// Debug level logging
-logger.d(
-  message: 'Checking token validity',
-  tag: 'Token',
-);
-
-// Warning level logging
-logger.w(
-  message: 'Token expiration time is less than 5 minutes',
-  tag: 'Token',
-);
-
-// Error level logging
-logger.e(
-  error: Exception('Network timeout'),
-  message: 'Failed to fetch user data',
-  tag: 'Network',
-  stackTrace: StackTrace.current,
-);
-```
-
-### Logger Parameters
-
-- **message** (String?): The log message content
-- **tag** (String?): Category/tag for filtering logs (e.g., 'Auth', 'Network', 'API')
-- **error** (Object?): Associated exception or error object
-- **stackTrace** (StackTrace?): Stack trace for debugging
-
-### API Request/Response Logging
-
-The Dio interceptor automatically logs all API requests and responses:
-
-```
-🔥 API Request - [API Request]
-  Url: https://api.example.com/login
-  Headers: {"Authorization": "Bearer token..."}
-  Data: {"email": "user@example.com", "password": "***"}
-  Params: {}
-
-✅ API Response - [API Response]
-  Url: https://api.example.com/login
-  Response: {"statusCode": 200, "accessToken": "new_token", "refreshToken": "refresh_token"}
-
-❌ API Error - [API Error]
-  Url: https://api.example.com/data
-  Status Code: 401
-  Error: Unauthorized
-```
-
-### Logger Configuration
-
-The logger is initialized in the app's bootstrapper:
-
-```dart
-// In lib/core/app/bootstrapper_app.dart
-await initLogger();
-```
-
-- **Debug Mode**: Logs all levels (DEBUG, INFO, WARNING, ERROR) to console
-- **Release Mode**: Logging is disabled (Level.OFF)
-
----
-
-## 🔐 Refresh Token Flow
-
-The project implements an automatic token refresh mechanism to handle expired access tokens seamlessly.
-
-This works alongside the login architecture above: once login succeeds, tokens are stored and later requests are protected by the interceptor.
-
-### How It Works
+Once login succeeds, tokens are stored and all subsequent requests are protected by the Dio interceptor.
 
 ```
 API Request
-    ↓
-Add Authorization Header (if token exists)
-    ↓
+  ↓
+Add Authorization header (if token exists)
+  ↓
 Send Request
-    ↓
-Response with 401 (Unauthorized)?
-    ├─ YES → Has Refresh Token?
-    │        ├─ YES → Call Refresh Endpoint
-    │        │         ├─ Success → Get new tokens
-    │        │         │            ├─ Save new Access Token
-    │        │         │            ├─ Save new Refresh Token
-    │        │         │            └─ Retry Original Request
-    │        │         │
-    │        │         └─ Failed → Remove Session
-    │        │
-    │        └─ NO → Show Session Expire Dialog
-    │
-    └─ NO → Return Response
+  ↓
+401 Unauthorized?
+  ├─ YES → Has Refresh Token?
+  │         ├─ YES → Call refresh endpoint
+  │         │         ├─ Success → Save new tokens → Retry original request
+  │         │         └─ Failed  → Remove session → Show session expired dialog
+  │         └─ NO  → Show session expired dialog
+  └─ NO  → Return response normally
 ```
 
-### Step-by-Step Process
+### How Each Step Works
 
-#### 1. **Interceptor Detects 401 Error**
+**Step 1 — Interceptor catches 401:**
 
 ```dart
 @override
 void onError(DioException err, ErrorInterceptorHandler handler) async {
   final statusCode = err.response?.statusCode;
-  
+
   if (statusCode == 401 && requestOptions.extra['retried'] != true) {
     // Attempt token refresh
   }
 }
 ```
 
-#### 2. **Retrieve Refresh Token**
+**Step 2 — Retrieve the refresh token:**
 
 ```dart
 final refreshToken = await _secureStorage.read(key: CoreConstants.refreshTokenKey);
 if (refreshToken == null || refreshToken.isEmpty) {
-  return handler.next(err); // No refresh token available
+  return handler.next(err); // No refresh token, propagate error
 }
 ```
 
-#### 3. **Call Refresh Endpoint**
+**Step 3 — Call the refresh endpoint:**
 
 ```dart
+// A separate Dio instance (no interceptors) prevents infinite loops
 final refreshDio = Dio(BaseOptions(baseUrl: requestOptions.baseUrl));
 final resp = await refreshDio.post(
   CoreConstants.refreshTokenEndpoint,
@@ -409,9 +259,7 @@ final resp = await refreshDio.post(
 );
 ```
 
-**Note**: A separate Dio instance without interceptors is used to prevent infinite loops.
-
-#### 4. **Save New Tokens**
+**Step 4 — Save new tokens:**
 
 ```dart
 if (resp.statusCode == 200) {
@@ -419,171 +267,142 @@ if (resp.statusCode == 200) {
   final newAccessToken = data['accessToken'] as String? ?? '';
   final newRefreshToken = data['refreshToken'] as String?;
 
-  // Save to storage
   await _sharePref.setData(CoreConstants.accessTokenKey, newAccessToken);
   await _secureStorage.write(key: CoreConstants.refreshTokenKey, value: newRefreshToken);
 }
 ```
 
-#### 5. **Retry Original Request**
+**Step 5 — Retry the original request:**
 
 ```dart
 requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
-requestOptions.extra['retried'] = true;
+requestOptions.extra['retried'] = true; // Prevents infinite refresh loop
 final response = await _dio.fetch(requestOptions);
 return handler.resolve(response);
 ```
 
-The original request is retried with the new access token. The `retried` flag prevents infinite refresh loops.
-
-#### 6. **Handle Refresh Failure**
-
-If the refresh token is invalid or expired, the session is removed and a dialog is shown:
+**Step 6 — Handle refresh failure:**
 
 ```dart
 catch (e) {
-  logger.e(
-    tag: 'Token Refresh',
-    error: e,
-    message: 'Refresh token failed',
-  );
+  logger.e(tag: 'Token Refresh', error: e, message: 'Refresh token failed');
   try {
     await _sessionService.removeSession();
   } catch (_) {}
+  // Session expired dialog is shown next
 }
 ```
 
-### Session Expiration Dialog
+### Session Expired Dialog
 
-When a 401 error occurs and token refresh fails, a user-friendly dialog appears:
+When refresh fails, a non-dismissible dialog guides the user back to login:
 
 ```dart
 void sessionExpireDialog() async {
   final context = appRouter.navigatorKey.currentContext;
   if (context != null && context.mounted) {
     showDialog(
-      barrierDismissible: false, // User cannot dismiss by tapping outside
+      barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) {
-        return SessionExpireDialog(
-          onConfirm: () {
-            Navigator.pop(context);
-            appRouter.replaceAll([const LoginRoute()]); // Navigate to login
-          },
-        );
-      },
+      builder: (context) => SessionExpireDialog(
+        onConfirm: () {
+          Navigator.pop(context);
+          appRouter.replaceAll([const LoginRoute()]);
+        },
+      ),
     );
   }
 }
 ```
 
-**SessionExpireDialog Features**:
-- ✅ Non-dismissible (user must click OK)
-- ✅ Clear message: "Session Expired"
-- ✅ Instructions: "Your session has expired. Please login again."
-- ✅ Single action button: "OK"
-- ✅ Navigates to login screen on confirmation
+Dialog features: non-dismissible, clear "Session Expired" message, single OK button, redirects to login on confirm.
 
 ---
 
-## 🔄 Token Storage
+## 🔒 Token Storage
 
-Tokens are stored securely using different storage methods:
-
-| Token Type | Storage Method | Location | Notes |
-|------------|----------------|----------|-------|
-| **Access Token** | SharedPreferences | `_sharePref` | Short-lived, less sensitive |
-| **Refresh Token** | Flutter Secure Storage | `_secureStorage` | Long-lived, highly sensitive |
-
-### Accessing Tokens
+| Token | Storage | Reason |
+|-------|---------|--------|
+| Access Token | `SharedPreferences` | Short-lived, less sensitive |
+| Refresh Token | `Flutter Secure Storage` | Long-lived, highly sensitive |
 
 ```dart
-// Get Access Token
+// Read access token
 final accessToken = await sharePref.getData(CoreConstants.accessTokenKey);
 
-// Get Refresh Token
+// Read refresh token
 final refreshToken = await secureStorage.read(key: CoreConstants.refreshTokenKey);
 ```
 
 ---
 
-## 📦 Related Files
+## 📝 Logger Usage
 
-- **Login Screen**: `lib/feature/auth/ui/login/login_screen.dart`
-- **Auth Notifier**: `lib/feature/auth/ui/provider/auth_notifier.dart`
-- **Login Use Case**: `lib/feature/auth/domain/usecase/login_usecase.dart`
-- **Auth Repository**: `lib/feature/auth/domain/repository/auth_repository.dart`
-- **Auth Repository Impl**: `lib/feature/auth/data/repository/auth_repository_impl.dart`
-- **Auth Remote Datasource**: `lib/feature/auth/data/datasource/auth_remote_data_source.dart`
-- **Auth API Client**: `lib/core/network/api_client.dart`
-- **Secure Env Helper**: `lib/core/config/secure_env.dart`
-- **Interceptor**: `lib/core/network/interceptor.dart`
-- **Logger**: `lib/core/logger/app_logging.dart`
-- **Session Expire Dialog**: `lib/core/widget/session_expire_dialog.dart`
-- **Routes**: `lib/core/app_route/app_route.dart`
-- **Constants**: `lib/core/constants/core_constants.dart`
+The project includes a custom logger that works in debug mode and is silenced in release mode.
 
----
+### Log Levels
 
-## 🚀 Best Practices
+```dart
+import 'package:flutter_template/core/logger/app_logging.dart';
 
-1. **Always use the logger** instead of `print()` or `log()`
-2. **Add meaningful tags** to logger calls for easy filtering
-3. **Include stack traces** when logging errors
-4. **Never log sensitive data** like passwords or full tokens
-5. **Use appropriate log levels**:
-   - `d()` - Debug information during development
-   - `i()` - Important information (user actions, key events)
-   - `w()` - Warnings (unusual behavior, degraded performance)
-   - `e()` - Errors (exceptions, failures)
+logger.d(message: 'Checking token validity', tag: 'Token');          // Debug
+logger.i(message: 'User login successful', tag: 'Auth');              // Info
+logger.w(message: 'Token expiring in < 5 minutes', tag: 'Token');     // Warning
+logger.e(
+  error: Exception('Network timeout'),
+  message: 'Failed to fetch user data',
+  tag: 'Network',
+  stackTrace: StackTrace.current,
+);                                                                     // Error
+```
 
----
+### Parameters
 
-## 📚 Additional Resources
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `message` | `String?` | The log message |
+| `tag` | `String?` | Category for filtering (e.g. `'Auth'`, `'Network'`) |
+| `error` | `Object?` | Associated exception |
+| `stackTrace` | `StackTrace?` | Stack trace for debugging |
 
-- [Dio Documentation](https://pub.dev/packages/dio)
-- [Auto Route Documentation](https://pub.dev/packages/auto_route)
-- [Flutter Secure Storage](https://pub.dev/packages/flutter_secure_storage)
-- [Logging Package](https://pub.dev/packages/logging)
+### API Request/Response Logging
 
-# 🔐 NDK Secret (Native Embedded Key)
+The Dio interceptor automatically logs all network activity:
 
-This project stores sensitive keys inside the native C/C++ layer, compiled into:
-- Android `.so` (NDK)
-- iOS `.xcframework`
+```
+🔥 API Request - [API Request]
+  Url: https://api.example.com/login
+  Headers: {"Authorization": "Bearer token..."}
+  Data: {"email": "user@example.com", "password": "***"}
 
-This removes secrets from Dart/Flutter source and makes casual extraction harder.
+✅ API Response - [API Response]
+  Url: https://api.example.com/login
+  Response: {"statusCode": 200, "accessToken": "...", "refreshToken": "..."}
 
----
+❌ API Error - [API Error]
+  Url: https://api.example.com/data
+  Status Code: 401
+  Error: Unauthorized
+```
 
-# ⚠️ SECURITY WARNING (READ FIRST)
+### Log Behavior by Build Mode
 
-Storing secrets inside a mobile app is **never fully secure or recommended for sensitive credentials**.
+| Mode | Behavior |
+|------|---------|
+| Debug | All levels logged to console |
+| Release | Logging disabled (`Level.OFF`) |
 
-Even with native code (NDK / iOS):
-
-- ❌ Secret is still inside the app binary
-- ❌ Can be extracted using reverse engineering tools (Ghidra, Hopper, strings)
-- ❌ Can be accessed from memory at runtime
-- ❌ Provides obfuscation, NOT real security
-
-👉 **Client-side secrets should NOT be treated as truly confidential**
+> Logger is initialized in `BootstrapperApp` via `await initLogger()`.
 
 ---
 
-# ⚙️ WHEN TO USE THIS APPROACH
+## 🔑 NDK Native Secret
 
-Use native secret storage ONLY when:
+Sensitive keys can be embedded in the native C/C++ layer (Android NDK / iOS xcframework), keeping them out of Dart source and making extraction harder.
 
-- You need a client-side identifier or static key
-- You want to increase reverse engineering effort
-- You accept that it is NOT fully secure
+> ⚠️ **This is obfuscation, not true security.** Keys in binaries can still be extracted with reverse-engineering tools (Ghidra, Hopper, strings). Never treat client-side secrets as truly confidential.
 
----
-
-# 🧩 IMPLEMENTATION
-
-## 1. Create Secret Header
+### Step 1 — Create the Secret Header
 
 ```bash
 mkdir -p ndk_secret
@@ -592,14 +411,16 @@ cat > ndk_secret/secrets.h <<'EOF'
 #define SECRETS_H
 
 inline const char* get_native_secret() {
-    return "YOUR_NEW_SECURE_KEY_GOES_HERE";
+    return "YOUR_SECURE_KEY_HERE";
 }
 
 #endif
 EOF
+```
 
-2. Native Bridge (C++)
+### Step 2 — Create the Native Bridge (C++)
 
+```cpp
 #include <cstring>
 #include <cstdlib>
 #include "secrets.h"
@@ -607,19 +428,18 @@ EOF
 extern "C"
 char* native_get_secret() {
     const char* secret = get_native_secret();
-
     size_t len = strlen(secret) + 1;
     char* result = (char*) malloc(len);
-
     if (result) {
         snprintf(result, len, "%s", secret);
     }
-
     return result;
 }
+```
 
-3. Dart FFI Usage
+### Step 3 — Call from Dart via FFI
 
+```dart
 import 'dart:ffi';
 import 'dart:io';
 import 'package:ffi/ffi.dart';
@@ -641,7 +461,11 @@ class NativeBridge {
     return ptr.toDartString();
   }
 }
+```
 
+### Step 4 — Build
+
+```bash
 # Android
 flutter clean
 flutter pub get
@@ -649,85 +473,148 @@ flutter run
 
 # iOS
 ./scripts/build_ios.sh
-cd ios
-pod install
-cd ..
+cd ios && pod install && cd ..
 flutter run
-
-
+```
 
 ---
 
-## 🧪 Device Preview (development tooling)
+## 🖥️ Device Preview
 
-DevicePreview lets you preview the app on multiple virtual devices and screen sizes directly from your debug build.
+`device_preview` lets you preview the app across different screen sizes directly from a debug build.
 
 - Package: https://pub.dev/packages/device_preview
-- Status: Enabled in debug/profile, disabled in release
+- **Active in:** debug / profile builds
+- **Disabled in:** release builds
 
-How it’s integrated
-- The root app is wrapped with DevicePreview so it is only active when not in release builds.
-- MaterialApp is configured to cooperate with DevicePreview for MediaQuery, locale, and text scaling.
+### Integration Points
 
-Key integration points
-- lib/main.dart wraps the app in DevicePreview with a build‑mode guard.
-- lib/core/app/my_app.dart passes through DevicePreview overrides.
+`main.dart`:
+```dart
+DevicePreview(
+  enabled: !kReleaseMode,
+  builder: (context) => const MyApp(),
+)
+```
 
-Example snippets (already in project)
-- main.dart
-  - DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp())
-- my_app.dart (MaterialApp.router)
-  - useInheritedMediaQuery: true
-  - builder: DevicePreview.appBuilder
-  - locale: DevicePreview.locale(context) ?? locale
+`my_app.dart` (`MaterialApp.router`):
+```dart
+useInheritedMediaQuery: true,
+builder: DevicePreview.appBuilder,
+locale: DevicePreview.locale(context) ?? locale,
+```
 
-How to use
-- Run the app in debug mode (flutter run). A Device Preview panel appears; pick devices, orientations, and locales.
-- In release builds, DevicePreview is automatically disabled so it will not affect end users.
+### Usage
 
-Troubleshooting
-- If you don’t see simulated sizes, ensure useInheritedMediaQuery is true and DevicePreview.appBuilder is used. Both are configured here already.
+Run in debug mode (`flutter run`) — a Device Preview panel appears on the side. Pick any device, orientation, or locale to test your layout.
 
+> **Troubleshooting:** If simulated sizes don't appear, verify `useInheritedMediaQuery: true` and `DevicePreview.appBuilder` are both set (they are by default in this template).
 
-## 🔐 Safe Device (startup security checks)
+---
 
-SafeDevice performs a few lightweight checks at startup (release mode only) to reduce risk on compromised devices.
+## 🛡️ Security Gate
+
+`SafeDevice` runs lightweight checks at startup (release only) to reduce risk on compromised devices.
 
 - Package: https://pub.dev/packages/safe_device
-- Status: Enforced in release only; no effect in debug/profile
+- **Active in:** release builds only
 
-What it checks
-- Root/Jailbreak status (iOS/Android)
-- Real device vs emulator/simulator
-- Developer mode enabled (Android)
-- Mock location enabled (Android)
+### What It Checks
 
-How it’s integrated
-- We added a SecurityGate widget that runs these checks before showing the app UI.
-- If any risk is detected, the app displays a friendly warning screen and blocks access.
-- In non‑release builds, SecurityGate allows the app to pass through immediately.
+| Check | Platform |
+|-------|----------|
+| Root / Jailbreak status | Android & iOS |
+| Real device vs emulator | Android & iOS |
+| Developer mode enabled | Android |
+| Mock location enabled | Android |
 
-Key files
-- lib/core/app/security_gate.dart — the guard and warning UI
-- lib/core/app/my_app.dart — composes SecurityGate around MaterialApp.router
+### Behavior by Build Mode
 
-iOS build note
-- We pin safe_device to version 1.1.6 to avoid a known compile‑time issue in newer versions on iOS.
-- See pubspec.yaml: safe_device: 1.1.6
-- If you upgraded previously and hit an Xcode error, clean pods and fetch again:
-  - flutter clean
-  - rm -rf ios/Pods ios/Podfile.lock
-  - cd ios && pod repo update && pod install && cd ..
-  - flutter pub get
+| Mode | Device Preview | Security Gate |
+|------|---------------|---------------|
+| Debug / Profile | ✅ ON | ❌ Not enforced |
+| Release | ❌ OFF | ✅ Enforced |
 
-Behavior by build mode
-- Debug/Profile: DevicePreview ON, SecurityGate NOT enforced (no blocking)
-- Release: DevicePreview OFF, SecurityGate enforced
+### iOS Note
 
-Verifying locally
-- Debug: Run flutter run — app loads with Device Preview panel.
-- Simulate a security trigger (Android): enable Developer options or Mock location, then build release to see the warning screen.
+`safe_device` is pinned to `1.1.6` in `pubspec.yaml` to avoid a known Xcode compile issue in newer versions. If you hit an Xcode error after upgrading, run:
 
-Notes
-- Checks are best‑effort and platform‑dependent; failures in a single check don’t block by themselves.
-- You can customize the copy/design of the warning screen in security_gate.dart.
+```bash
+flutter clean
+rm -rf ios/Pods ios/Podfile.lock
+cd ios && pod repo update && pod install && cd ..
+flutter pub get
+```
+
+### Key Files
+
+- `lib/core/app/security_gate.dart` — guard logic and warning UI
+- `lib/core/app/my_app.dart` — composes `SecurityGate` around `MaterialApp.router`
+
+---
+
+## 📚 Libraries Used
+
+### State Management
+`flutter_riverpod`, `riverpod_annotation`, `riverpod_generator`, `riverpod_lint`
+
+### Dependency Injection
+`get_it`, `injectable`, `injectable_generator`
+
+### Networking
+`dio`, `retrofit`, `retrofit_generator`
+
+### Storage & Environment
+`shared_preferences`, `flutter_secure_storage`, `flutter_secure_dotenv`, `flutter_secure_dotenv_generator`
+
+### Routing & Localization
+`auto_route`, `auto_route_generator`, `flutter_localizations`
+
+### UI & Utilities
+`flutter_svg`, `lottie`, `fluttertoast`, `google_fonts`, `cached_network_image`, `url_launcher`, `path_provider`, `skeletonizer`, `flutter_widget_from_html`, `flutter_expandable_fab`, `font_awesome_flutter`, `intl`, `collection`, `logging`, `logger`
+
+---
+
+## ✅ Best Practices
+
+1. **Always use the project logger** — never `print()` or `log()`
+2. **Add meaningful tags** to every logger call for easy filtering
+3. **Include stack traces** when logging errors
+4. **Never log sensitive data** — no passwords, no full tokens
+5. **Use the right log level:**
+   - `d()` — debug info during development
+   - `i()` — important events (user actions, key state changes)
+   - `w()` — unusual behavior or degraded performance
+   - `e()` — exceptions and failures
+
+---
+
+## 📦 Key File Reference
+
+| File | Path |
+|------|------|
+| Login Screen | `lib/feature/auth/ui/login/login_screen.dart` |
+| Auth Notifier | `lib/feature/auth/ui/provider/auth_notifier.dart` |
+| Login Use Case | `lib/feature/auth/domain/usecase/login_usecase.dart` |
+| Auth Repository | `lib/feature/auth/domain/repository/auth_repository.dart` |
+| Auth Repository Impl | `lib/feature/auth/data/repository/auth_repository_impl.dart` |
+| Auth Remote Datasource | `lib/feature/auth/data/datasource/auth_remote_data_source.dart` |
+| API Client | `lib/core/network/api_client.dart` |
+| Dio Interceptor | `lib/core/network/interceptor.dart` |
+| Logger | `lib/core/logger/app_logging.dart` |
+| Session Expire Dialog | `lib/core/widget/session_expire_dialog.dart` |
+| App Routes | `lib/core/app_route/app_route.dart` |
+| Constants | `lib/core/constants/core_constants.dart` |
+| Security Gate | `lib/core/app/security_gate.dart` |
+
+---
+
+## 🔗 Additional Resources
+
+- [Flutter Documentation](https://docs.flutter.dev/)
+- [Dio](https://pub.dev/packages/dio)
+- [Auto Route](https://pub.dev/packages/auto_route)
+- [Flutter Secure Storage](https://pub.dev/packages/flutter_secure_storage)
+- [Logging Package](https://pub.dev/packages/logging)
+- [Device Preview](https://pub.dev/packages/device_preview)
+- [Safe Device](https://pub.dev/packages/safe_device)
