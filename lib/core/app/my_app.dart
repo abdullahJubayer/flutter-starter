@@ -9,6 +9,7 @@ import 'package:flutter_template/l10n/app_localizations.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'lifecycle_manager.dart';
+import 'security_gate.dart';
 
 final appRouter = AppRouter();
 
@@ -36,7 +37,6 @@ class _MyAppState extends ConsumerState<MyApp> {
 
     return LifecycleManager(
       child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
         routerConfig: appRouter.config(),
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
@@ -46,7 +46,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         localizationsDelegates: const [AppLocalizations.delegate],
         builder: (context, child) {
           final toastBuilder = FToastBuilder();
-          final builtChild = toastBuilder(context, child);
+          final builtChild = toastBuilder(context, SecurityGate(child: child!));
 
           if (environment != 'prod') {
             return Banner(

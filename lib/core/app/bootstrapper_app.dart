@@ -21,7 +21,7 @@ class BootstrapperApp {
     return AppConfig(
       themeMode: themeIndex != null
           ? ThemeMode.values[themeIndex]
-          : ThemeMode.light,
+          : ThemeMode.dark,
       locale: localeCode != null ? Locale(localeCode) : const Locale('en'),
     );
   }

@@ -12,7 +12,7 @@ class AppDarkColors {
 // PRIMARY (WhatsApp Green - Dark Theme)
 // =======================================================
 
-  static const Color primary = Color(0xFF25D366);
+  static const Color primary = Color(0xFF04140A);
 
   static const MaterialColor primaryPalette = MaterialColor(0xFF25D366, {
     50: Color(0xFF04140A),
