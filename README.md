@@ -654,3 +654,80 @@ pod install
 cd ..
 flutter run
 
+
+
+---
+
+## 🧪 Device Preview (development tooling)
+
+DevicePreview lets you preview the app on multiple virtual devices and screen sizes directly from your debug build.
+
+- Package: https://pub.dev/packages/device_preview
+- Status: Enabled in debug/profile, disabled in release
+
+How it’s integrated
+- The root app is wrapped with DevicePreview so it is only active when not in release builds.
+- MaterialApp is configured to cooperate with DevicePreview for MediaQuery, locale, and text scaling.
+
+Key integration points
+- lib/main.dart wraps the app in DevicePreview with a build‑mode guard.
+- lib/core/app/my_app.dart passes through DevicePreview overrides.
+
+Example snippets (already in project)
+- main.dart
+  - DevicePreview(enabled: !kReleaseMode, builder: (context) => const MyApp())
+- my_app.dart (MaterialApp.router)
+  - useInheritedMediaQuery: true
+  - builder: DevicePreview.appBuilder
+  - locale: DevicePreview.locale(context) ?? locale
+
+How to use
+- Run the app in debug mode (flutter run). A Device Preview panel appears; pick devices, orientations, and locales.
+- In release builds, DevicePreview is automatically disabled so it will not affect end users.
+
+Troubleshooting
+- If you don’t see simulated sizes, ensure useInheritedMediaQuery is true and DevicePreview.appBuilder is used. Both are configured here already.
+
+
+## 🔐 Safe Device (startup security checks)
+
+SafeDevice performs a few lightweight checks at startup (release mode only) to reduce risk on compromised devices.
+
+- Package: https://pub.dev/packages/safe_device
+- Status: Enforced in release only; no effect in debug/profile
+
+What it checks
+- Root/Jailbreak status (iOS/Android)
+- Real device vs emulator/simulator
+- Developer mode enabled (Android)
+- Mock location enabled (Android)
+
+How it’s integrated
+- We added a SecurityGate widget that runs these checks before showing the app UI.
+- If any risk is detected, the app displays a friendly warning screen and blocks access.
+- In non‑release builds, SecurityGate allows the app to pass through immediately.
+
+Key files
+- lib/core/app/security_gate.dart — the guard and warning UI
+- lib/core/app/my_app.dart — composes SecurityGate around MaterialApp.router
+
+iOS build note
+- We pin safe_device to version 1.1.6 to avoid a known compile‑time issue in newer versions on iOS.
+- See pubspec.yaml: safe_device: 1.1.6
+- If you upgraded previously and hit an Xcode error, clean pods and fetch again:
+  - flutter clean
+  - rm -rf ios/Pods ios/Podfile.lock
+  - cd ios && pod repo update && pod install && cd ..
+  - flutter pub get
+
+Behavior by build mode
+- Debug/Profile: DevicePreview ON, SecurityGate NOT enforced (no blocking)
+- Release: DevicePreview OFF, SecurityGate enforced
+
+Verifying locally
+- Debug: Run flutter run — app loads with Device Preview panel.
+- Simulate a security trigger (Android): enable Developer options or Mock location, then build release to see the warning screen.
+
+Notes
+- Checks are best‑effort and platform‑dependent; failures in a single check don’t block by themselves.
+- You can customize the copy/design of the warning screen in security_gate.dart.
