@@ -1,4 +1,3 @@
-import 'dart:developer' as developer;
 import 'package:dio/dio.dart';
 import 'package:flutter_template/feature/auth/domain/model/base_response.dart';
 
@@ -7,15 +6,11 @@ class ApiExceptionMapper {
     Object error, [
     StackTrace? stackTrace,
   ]) {
-    developer.log(
-      'Mapping an exception to BaseResponse',
-      error: error,
-      stackTrace: stackTrace,
-      name: 'ApiExceptionMapper',
-    );
 
     if (error is DioException) {
       return _handleDioException(error);
+    } else if (error is TypeError || error is FormatException) {
+      return BaseResponse.fromParseError(error);
     } else {
       return BaseResponse(
         status: false,
@@ -59,6 +54,13 @@ class ApiExceptionMapper {
         );
 
       case DioExceptionType.unknown:
+        if (error.error is TypeError || error.error is FormatException) {
+          return BaseResponse.fromParseError(error.error!);
+        }
+        return BaseResponse(
+          status: false,
+          message: error.message ?? 'An unexpected network error occurred.',
+        );
       default:
         return BaseResponse(
           status: false,

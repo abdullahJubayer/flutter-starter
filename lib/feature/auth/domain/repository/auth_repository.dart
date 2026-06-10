@@ -7,7 +7,7 @@ import 'package:flutter_template/feature/auth/domain/model/user_model.dart';
 abstract class AuthRepository {
   Future<BaseResponse<AuthResponse>> login(LoginRequest request);
 
-  Future<void> register(RegisterRequest request);
+  Future<BaseResponse<AuthResponse>> register(RegisterRequest request);
 
   Future<BaseResponse<AuthResponse>> refreshToken(String token);
 

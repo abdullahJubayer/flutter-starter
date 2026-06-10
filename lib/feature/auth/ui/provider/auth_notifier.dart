@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter_template/core/auth/i_session_service.dart';
 import 'package:flutter_template/core/di/injection_container.dart';
-import 'package:flutter_template/core/utils/extension/error_extensions.dart';
 import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
 import 'package:flutter_template/feature/auth/domain/model/base_response.dart';
 import 'package:flutter_template/feature/auth/domain/model/login_request.dart';
@@ -21,7 +20,6 @@ class AuthNotifier extends _$AuthNotifier {
 
   @override
   AuthState build() {
-    // Automatically attempt to restore session on initialization
     Future.microtask(() => getMe());
     return const AuthState();
   }
@@ -29,73 +27,45 @@ class AuthNotifier extends _$AuthNotifier {
   Future<BaseResponse<AuthResponse>> login(LoginRequest request) async {
     state = state.copyWith(isLoading: true, error: null);
 
-    try {
-      final response = await _loginUseCase(request);
-
-      if (response.status && response.data != null) {
-        await sl<ISessionService>().saveSession(
-          accessToken: response.data!.accessToken,
-          refreshToken: response.data!.refreshToken,
-        );
-      }
+    final response = await _loginUseCase(request);
+    if (response.status && response.data != null) {
+      await sl<ISessionService>().saveSession(
+        accessToken: response.data!.accessToken,
+        refreshToken: response.data!.refreshToken,
+      );
 
       state = state.copyWith(
         isLoading: false,
-        user: response.data,
+        user: response.data?.user,
         error: response.status ? null : response.error,
       );
       return response;
-    } catch (error) {
-      final message = error.extractErrorMessage();
-      state = state.copyWith(isLoading: false, error: message);
-      return BaseResponse<AuthResponse>(
-        status: false,
-        message: message,
-        data: null,
-      );
+    } else {
+      state = state.copyWith(isLoading: false, error: response.error);
+      return response;
     }
   }
 
   Future<BaseResponse<AuthResponse>> register(RegisterRequest request) async {
-    state = state.copyWith(isLoading: true, error: null);
-    try {
-      await _authRepository.register(request);
-      state = state.copyWith(isLoading: false);
-      return BaseResponse<AuthResponse>(status: true);
-    } catch (error) {
-      final message = error.extractErrorMessage();
-      state = state.copyWith(isLoading: false, error: message);
-      return BaseResponse<AuthResponse>(status: false, message: message);
+    state = state.copyWith(isLoading: true);
+    final response = await _authRepository.register(request);
+    if (response.status) {
+      return response;
+    } else {
+      state = state.copyWith(isLoading: false, error: response.error);
+      return response;
     }
   }
 
   Future<BaseResponse<UserModel>> getMe() async {
     state = state.copyWith(isLoading: true, error: null);
-    try {
-      final response = await _authRepository.getMe();
-      if (response.status && response.data != null) {
-        final accessToken = await sl<ISessionService>().getAccessToken();
-        final refreshToken = await sl<ISessionService>().getRefreshToken();
-        state = state.copyWith(
-          isLoading: false,
-          user: AuthResponse(
-            user: response.data,
-            accessToken: accessToken,
-            refreshToken: refreshToken,
-          ),
-        );
-      } else {
-        state = state.copyWith(isLoading: false, error: response.error);
-      }
+    final response = await _authRepository.getMe();
+    if (response.status && response.data != null) {
+      state = state.copyWith(isLoading: false, user: response.data);
       return response;
-    } catch (error) {
-      final message = error.extractErrorMessage();
-      state = state.copyWith(isLoading: false, error: message);
-      return BaseResponse<UserModel>(
-        status: false,
-        message: message,
-        data: null,
-      );
+    } else {
+      state = state.copyWith(isLoading: false, error: response.error);
+      return response;
     }
   }
 

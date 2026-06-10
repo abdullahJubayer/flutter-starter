@@ -18,7 +18,7 @@ abstract class ApiClient {
   factory ApiClient(Dio dio) = _ApiClient;
 
   @POST("auth/register")
-  Future<void> register(@Body() RegisterRequest request);
+  Future<BaseResponse<AuthResponse>> register(@Body() RegisterRequest request);
 
   @POST("auth/login")
   Future<BaseResponse<AuthResponse>> login(@Body() LoginRequest request);

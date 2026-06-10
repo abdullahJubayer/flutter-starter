@@ -1,4 +1,5 @@
 import 'package:flutter_template/core/network/api_client.dart';
+import 'package:flutter_template/core/utils/extension/network_extension.dart';
 import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
 import 'package:flutter_template/feature/auth/domain/model/base_response.dart';
 import 'package:flutter_template/feature/auth/domain/model/login_request.dart';
@@ -16,21 +17,21 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<BaseResponse<AuthResponse>> login(LoginRequest request) {
-    return _apiClient.login(request);
+    return _apiClient.login(request).guardCall();
   }
 
   @override
-  Future<void> register(RegisterRequest request) {
-    return _apiClient.register(request);
+  Future<BaseResponse<AuthResponse>> register(RegisterRequest request) {
+    return _apiClient.register(request).guardCall();
   }
 
   @override
   Future<BaseResponse<AuthResponse>> refreshToken(String token) {
-    return _apiClient.refreshToken(RefreshTokenRequest(refreshToken: token));
+    return _apiClient.refreshToken(RefreshTokenRequest(refreshToken: token)).guardCall();
   }
 
   @override
   Future<BaseResponse<UserModel>> getMe() {
-    return _apiClient.getMe();
+    return _apiClient.getMe().guardCall();
   }
 }

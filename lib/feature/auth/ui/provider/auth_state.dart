@@ -1,7 +1,7 @@
-import 'package:flutter_template/feature/auth/domain/model/auth_response.dart';
+import 'package:flutter_template/feature/auth/domain/model/user_model.dart';
 
 class AuthState {
-  final AuthResponse? user;
+  final UserModel? user;
   final bool isLoading;
   final String? error;
 
@@ -12,7 +12,7 @@ class AuthState {
   });
 
   AuthState copyWith({
-    AuthResponse? user,
+    UserModel? user,
     bool? isLoading,
     String? error,
   }) {
